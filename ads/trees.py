@@ -1,6 +1,5 @@
 from typing import Union, Optional, Type 
 
-
 def _build_btree_string(root, rec:bool=False) -> str:
   if root is None:
     return [], 0
@@ -40,7 +39,7 @@ class BinaryTree:
     self.left = None
 
   def __repr__(self):
-    return f"Tree(data={self.data}, right={self.right}, left={self.left}"
+    return f"BinaryTree(data={self.data}, right={self.right}, left={self.left})"
 
   def pprint(self) -> None:
     print(_build_btree_string(self))

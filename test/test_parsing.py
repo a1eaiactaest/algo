@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-import unittest
-
 from ads.parsing import postfix
 from ads.parsing import valid_parentheses
+
+import unittest
 
 class TestPosFix(unittest.TestCase):
   def test_spaces(self):
@@ -26,7 +26,7 @@ class TestPosFix(unittest.TestCase):
     self.assertEqual(postfix(equation_string), 141.0) 
     del equation_string
 
-class TestVlidParetheses(unittest.TestCase):
+class TestValidParetheses(unittest.TestCase):
   def test_round(self):
     case1 = '(())'
     case2 = '()'
@@ -38,7 +38,6 @@ class TestVlidParetheses(unittest.TestCase):
     del case1, case2, case3
   
   def test_square(self):
-    pass
     case1 = '[]'
     case2 = '[][][[][]]'
     case3 = '[[[]'
@@ -49,7 +48,6 @@ class TestVlidParetheses(unittest.TestCase):
     del case1, case2, case3
 
   def test_curly(self):
-    pass
     case1 = '{}{}'
     case2 = '{{{}{}}}{}'
     case3 = '{{}{{}'
