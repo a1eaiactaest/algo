@@ -72,6 +72,11 @@ class BinaryTree:
     parent = None
     cnode = self
 
+    if self.left is None and self.right is None:
+      if self.data is not None and self.data == data:
+        self.data = None
+        return
+
     while cnode.data != data:
       if data < cnode.data:
         parent = cnode

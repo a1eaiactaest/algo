@@ -40,6 +40,13 @@ class TestBinaryTree(unittest.TestCase):
     self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
     del root
 
+  def remove_on_one_node(self):
+    root = BinaryTree(10)
+    self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
+    root.remove(10)
+    self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
+
+
 if __name__ == "__main__":
   unittest.main()
 
