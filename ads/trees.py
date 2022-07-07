@@ -154,6 +154,12 @@ def array2bintree(arr: list) -> BinaryTree:
     root.insert(arr[i])
   return root
 
+class Tree:
+  def __init__(self):
+    raise NotImplementedError
+
+  def __eg__(self):
+    pass
 
 if __name__ == "__main__":
   arr = [35,28,31,59,23,55,67,50,56,30]
