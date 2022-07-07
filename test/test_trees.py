@@ -34,6 +34,12 @@ class TestBinaryTree(unittest.TestCase):
     self.assertEqual(repr(root), 'BinaryTree(data=10, right=BinaryTree(data=11, right=None, left=None), left=BinaryTree(data=9, right=None, left=None))')
     del root
 
+  def test_insert_on_empty(self):
+    root = BinaryTree()
+    root.insert(10)
+    self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
+    del root
+
 if __name__ == "__main__":
   unittest.main()
 

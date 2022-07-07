@@ -45,8 +45,13 @@ class BinaryTree:
     print(_build_btree_string(self))
 
   def insert(self, data: Union[int, float]):
+    if self.data == None:
+      self.data = data
+      return
+
     if data == self.data:
       return
+
     if data < self.data and self.left is not None:
       return self.left.insert(data)
     if data > self.data and self.right is not None:
