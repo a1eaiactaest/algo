@@ -41,6 +41,12 @@ class BinaryTree:
   def __repr__(self):
     return f"BinaryTree(data={self.data}, right={self.right}, left={self.left})"
 
+  def __eq__(self, other):
+    return self.data == other
+
+  def __ne__(self, other):
+    return self.data != other
+
   def pprint(self) -> None:
     print(_build_btree_string(self))
 
