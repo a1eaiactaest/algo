@@ -5,7 +5,7 @@ from ads.parsing import valid_parentheses
 
 import unittest
 
-class TestPosFix(unittest.TestCase):
+class TestPostFix(unittest.TestCase):
   def test_spaces(self):
     equation_string = "3 5 * 4 +"
     self.assertEqual(postfix(equation_string), 19.0) 
