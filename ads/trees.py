@@ -247,27 +247,28 @@ def _get_bintree_properties(root: BinaryTree) -> BinaryTreeProperties:
     ndepth = []
 
     for node in cdepth:
-      size += 1
       data = node.data
-      min_node = min(data, min_node)
-      max_node = min(data, max_node)
+      if data is not None:
+        size += 1
+        min_node = min(data, min_node)
+        max_node = min(data, max_node)
 
-      if node.left is None and node.right is None:
-        if min_leaf_depth == 0:
-          min_leaf_depth = max_leaf_depth
-        leaf_count += 1
+        if node.left is None and node.right is None:
+          if min_leaf_depth == 0:
+            min_leaf_depth = max_leaf_depth
+          leaf_count += 1
 
-      if node.left is not None:
-        ndepth.append(node.left)
-        is_complete = not none_node_seen
-      else:
-        none_node_seen = True
+        if node.left is not None:
+          ndepth.append(node.left)
+          is_complete = not none_node_seen
+        else:
+          none_node_seen = True
 
-      if node.right is not None:
-        ndepth.append(node.right)
-        is_complete = not none_node_seen
-      else:
-        none_node_seen = True
+        if node.right is not None:
+          ndepth.append(node.right)
+          is_complete = not none_node_seen
+        else:
+          none_node_seen = True
 
     cdepth = ndepth
   
