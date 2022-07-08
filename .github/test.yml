@@ -1,0 +1,33 @@
+name: Push&Pull workflow
+
+on: [push, pull_request]
+
+jobs:
+  linter:
+    name: Linter
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Set up Python@3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Lint with pylint
+      run: python -m pylint --disable=all -e W0311 --jobs=0 --indent-string=' ' **/*.py
+      
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Set up Python@3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Run pytest
+      run: python -m pytest -v
