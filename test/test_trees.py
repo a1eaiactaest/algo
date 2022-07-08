@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from ads.trees import BinaryTree, array2bintree
+from ads.trees import BinaryTree 
+from .utils import pprint_default
 
 import unittest
 
@@ -46,6 +47,22 @@ class TestBinaryTree(unittest.TestCase):
     root.remove(10)
     self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
 
+class TestBinaryTreeUtils(unittest.TestCase):
+  def test_pretty_print(self):
+    lines = pprint_default([10])
+    self.assertEqual(lines, ['-(10)'])
+    lines = pprint_default([35,28,31,59,23,55,67,50,56,30])
+    self.assertEqual(lines, [
+      '      ┌─-(67)', 
+      '  ┌─-(59)', 
+      '  │   │   ┌─-(56)', 
+      '  │   └─-(55)', 
+      '  │       └─-(50)', 
+      '-(35)', 
+      '  │   ┌─-(31)', 
+      '  │   │   └─-(30)', 
+      '  └─-(28)', 
+      '      └─-(23)'])
 
 if __name__ == "__main__":
   unittest.main()
