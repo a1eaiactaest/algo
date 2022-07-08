@@ -36,7 +36,7 @@ def _build_btree_string(root, rec:bool=False) -> str:
 
   for i, data in enumerate(left_child):
     if i == idx_l:
-        ret.append("  └─" + data)
+      ret.append("  └─" + data)
     elif i > idx_l:
       ret.append("    " + data)
     else:
