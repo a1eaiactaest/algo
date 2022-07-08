@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from ads.trees import BinaryTree, array2bintree
+from ads.trees import BinaryTree, build
 from ads.traversal import dfs_binary, bfs_binary
 
 import unittest
 
-test_tree = array2bintree([35,28,31,59,23,55,67,50,56,30])
+test_tree = build([35,28,31,59,23,55,67,50,56,30])
 empty = BinaryTree()
 
 class TestTraversal(unittest.TestCase):

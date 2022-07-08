@@ -47,7 +47,7 @@ def _build_btree_string(root, rec:bool=False) -> str:
   return '\n'.join(ret)
 
 class BinaryTree:
-  def __init__(self, data=None) -> None:
+  def __init__(self, data:Optional[NodeValue]=None) -> None:
     self.data = data
     self.right = None
     self.left = None
@@ -206,10 +206,21 @@ class BinaryTree:
     Height is the number of edges on the longest path between a root and a leaf node.
     Binary tree with a single node (root) has height of 0.
 
-    :return: Height of a Binary tree.
+    :return: Height of a binary tree.
     :rtype: int
     """
     return _get_bintree_properties(self).height
+
+  @property
+  def size(self) -> int:
+    """Returns the size of the binary tree.
+
+    Size is the number of nodes in the binary tree.
+
+    :return: Number of all nodes in the binary tree.
+    :rtype: int
+    """
+    return _get_bintree_properties(self).size
 
 @dataclass
 class BinaryTreeProperties:
@@ -270,7 +281,7 @@ def _get_bintree_properties(root: BinaryTree) -> BinaryTreeProperties:
   )
 
 
-def array2bintree(arr: List[NodeValue]) -> BinaryTree:
+def build(arr: List[NodeValue]) -> BinaryTree:
   """Build a tree from list and return it's node.
   :param arr: List representation of a tree, which is a list of node values.
   :type arr: [Any]
@@ -292,7 +303,7 @@ class Tree:
 
 if __name__ == "__main__":
   arr = [35,28,31,59,23,55,67,50,56,30]
-  bintree = array2bintree(arr)
+  bintree = build(arr)
   bintree.pprint()
   bintree.remove(30)
   bintree.pprint()

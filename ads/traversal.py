@@ -11,7 +11,7 @@ if parent in ['ADS', 'ads']:
 elif parent == 'test':
   sys.path.insert(0, '../ads')
   
-from trees import BinaryTree, Tree, array2bintree
+from trees import BinaryTree, Tree, build
 
 def dfs_binary(tree:BinaryTree) -> list:
   """Traverse through a binary tree using Depth-first search.
@@ -73,5 +73,5 @@ def bfs_binary(tree:BinaryTree) -> list:
 
 if __name__ == "__main__":
   x = [35,28,31,59,23,55,67,50,56,30]
-  print(dfs_binary(array2bintree(x)))
+  print(dfs_binary(build(x)))
   print(dfs_binary(BinaryTree()))

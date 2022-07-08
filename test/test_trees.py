@@ -47,6 +47,26 @@ class TestBinaryTree(unittest.TestCase):
     root.remove(10)
     self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
 
+  def test_size(self):
+    root = BinaryTree(10)
+    root.insert(11)
+    root.insert(12)
+    root.insert(15)
+    self.assertEqual(root.size, 4)
+
+  def test_size_one_node(self):
+    root = BinaryTree(10)
+    self.assertEqual(root.size, 1)
+
+  def test_size_empty(self):
+    root = BinaryTree()
+    self.assertEqual(root.size, 0)
+
+
+  def test_height(self):
+    pass
+
+
   # TODO
   def test_leaves(self):
     pass
