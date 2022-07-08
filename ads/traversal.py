@@ -65,7 +65,8 @@ def bfs_binary(tree:BinaryTree) -> list:
         ndepth.append(node.left)
       if node.right is not None:
         ndepth.append(node.right)
-      visited.append(node.data)
+      if node.data is not None:
+        visited.append(node.data)
     cdepth = ndepth
     ndepth = []
   return visited
