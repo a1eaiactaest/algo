@@ -1,6 +1,20 @@
-from typing import Union, Optional, Type 
+from dataclasses import dataclass
+from typing import Union, Optional, List, Any
+
+NodeValue = Any
 
 def _build_btree_string(root, rec:bool=False) -> str:
+  """Represents binary tree in a visual format.
+
+  :param root: Root of the binary tree.
+  :type root: BinaryTree
+  :param rec: true if recursive call is made.
+  :type rec: Optional[bool]
+  :default ret: False
+  :return: Visual representation of a binary tree.
+  :rtype: str
+  """
+
   if root is None:
     return [], 0
 
@@ -50,7 +64,14 @@ class BinaryTree:
   def pprint(self) -> None:
     print(_build_btree_string(self))
 
-  def insert(self, data: Union[int, float]):
+  def insert(self, data: Union[int, float]) -> "BinaryTree":
+    """Adds data to a binary tree.
+
+    :param data: Value which should be added to the tree.
+    :type data: NodeValue
+    :return: Mdodified binary tree.
+    :rtype: BinaryTree
+    """
     if self.data == None:
       self.data = data
       return
@@ -70,9 +91,13 @@ class BinaryTree:
       self.right = new_node
     return
 
-  def remove(self, data):
-    """
-    Removes all occurrences of ::data:: in the BinaryTree
+  def remove(self, data: NodeValue) -> "BinaryTree":
+    """Removes all occurrences of ::data:: in the BinaryTree
+
+    :param data: Value which should be removed from a tree.
+    :type data: NodeValue
+    :return: Modified Binary Tree without :data:
+    :rtype: BinaryTree
     """
 
     parent = None
@@ -148,7 +173,111 @@ class BinaryTree:
         else:
           return cnode.right
 
-def array2bintree(arr: list) -> BinaryTree:
+  @property
+  def leaves(self) -> List["BinaryTree"]:
+    """Return the leaf nodes of the binary tree.
+
+    Leaf nodes are the one without any children.
+
+    :return: List of leaf nodes.
+    :rtype [ads.trees.BinaryTree]
+    """
+
+    cdepth= [self]
+    leaves = []
+
+    while len(cdepth) > 0:
+      ndepth = []
+      for node in cdepth:
+        if node.left is None and node.right is None:
+          leaves.append(node.data)
+          continue
+        if node.left is not None:
+          ndepth.append(node.left)
+        if node.right is not None:
+          ndepth.append(node.right)
+      cdepth = ndepth
+    return leaves
+
+  @property
+  def height(self) -> int:
+    """Return the height of the binary tree.
+
+    Height is the number of edges on the longest path between a root and a leaf node.
+    Binary tree with a single node (root) has height of 0.
+
+    :return: Height of a Binary tree.
+    :rtype: int
+    """
+    return _get_bintree_properties(self).height
+
+@dataclass
+class BinaryTreeProperties:
+  height: int
+  size: int
+  is_complete: bool
+  leaf_count: int
+  min_node: NodeValue
+  max_node: NodeValue
+
+def _get_bintree_properties(root: BinaryTree) -> BinaryTreeProperties:
+  min_node = root.data
+  max_node = root.data
+  size = 0
+  leaf_count = 0
+  min_leaf_depth = 0
+  max_leaf_depth = -1
+  is_complete = True
+  none_node_seen = False
+
+  cdepth = [root]
+  while len(cdepth) > 0:
+    max_leaf_depth += 1
+    ndepth = []
+
+    for node in cdepth:
+      size += 1
+      data = node.data
+      min_node = min(data, min_node)
+      max_node = min(data, max_node)
+
+      if node.left is None and node.right is None:
+        if min_leaf_depth == 0:
+          min_leaf_depth = max_leaf_depth
+        leaf_count += 1
+
+      if node.left is not None:
+        ndepth.append(node.left)
+        is_complete = not none_node_seen
+      else:
+        none_node_seen = True
+
+      if node.right is not None:
+        ndepth.append(node.right)
+        is_complete = not none_node_seen
+      else:
+        none_node_seen = True
+
+    cdepth = ndepth
+  
+  return BinaryTreeProperties(
+    height=max_leaf_depth,
+    size=size,
+    is_complete=is_complete,
+    leaf_count=leaf_count,
+    min_node=min_node,
+    max_node=max_node
+  )
+
+
+def array2bintree(arr: List[NodeValue]) -> BinaryTree:
+  """Build a tree from list and return it's node.
+  :param arr: List representation of a tree, which is a list of node values.
+  :type arr: [Any]
+  :return: Root node of created binary tree.
+  :rype: BinaryTree
+  """
+
   root = BinaryTree(arr[0])
   for i in range(1, len(arr)):
     root.insert(arr[i])
@@ -169,3 +298,6 @@ if __name__ == "__main__":
   bintree.pprint()
   bintree.insert(30)
   bintree.pprint()
+
+  print(bintree.leaves)
+  print(bintree.height)

@@ -41,11 +41,16 @@ class TestBinaryTree(unittest.TestCase):
     self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
     del root
 
-  def remove_on_one_node(self):
+  def test_remove_on_one_node(self):
     root = BinaryTree(10)
     self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
     root.remove(10)
     self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
+
+  # TODO
+  def test_leaves(self):
+    pass
+
 
 class TestBinaryTreeUtils(unittest.TestCase):
   def test_pretty_print(self):
