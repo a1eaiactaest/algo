@@ -190,8 +190,9 @@ class BinaryTree:
       ndepth = []
       for node in cdepth:
         if node.left is None and node.right is None:
-          leaves.append(node.data)
-          continue
+          if node.data is not None:
+            leaves.append(node.data)
+            continue
         if node.left is not None:
           ndepth.append(node.left)
         if node.right is not None:

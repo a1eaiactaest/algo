@@ -11,7 +11,7 @@ if parent in ['ADS', 'ads']:
 elif parent == 'test':
   sys.path.insert(0, '../ads')
   
-from trees import BinaryTree, Tree, build
+from trees import BinaryTree, build
 
 def dfs_binary(tree:BinaryTree) -> list:
   """Traverse through a binary tree using Depth-first search.

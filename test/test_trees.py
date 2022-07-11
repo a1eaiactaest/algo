@@ -64,12 +64,13 @@ class TestBinaryTree(unittest.TestCase):
 
 
   def test_height(self):
-    pass
-
+    root = BinaryTree()
+    self.assertEqual(root.height, 0)
 
   # TODO
   def test_leaves(self):
-    pass
+    root = BinaryTree()
+    self.assertEqual(root.leaves, [])
 
 
 class TestBinaryTreeUtils(unittest.TestCase):
@@ -92,4 +93,3 @@ class TestBinaryTreeUtils(unittest.TestCase):
 if __name__ == "__main__":
   unittest.main()
 
-    
