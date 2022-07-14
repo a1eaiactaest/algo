@@ -1,0 +1,4 @@
+pytest
+graphviz
+networkx
+matplotlib
