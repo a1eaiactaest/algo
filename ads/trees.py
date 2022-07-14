@@ -1,5 +1,9 @@
 from dataclasses import dataclass
-from typing import Union, Optional, List, Any
+from typing import Union, Optional, List, Any, Iterator
+
+import os
+import graphviz
+import networkx as nx
 
 NodeValue = Any
 
@@ -60,6 +64,26 @@ class BinaryTree:
 
   def __ne__(self, other):
     return self.data != other
+
+  def __iter__(self) -> Iterator["BinaryTree"]:
+    """Iterate through the nodes in the binary tree.
+    
+    :return: BinaryTree iterator
+    :rtype: Iterator[trees.BinaryTree]
+    """
+
+    cdepth = [self]
+
+    while len(cdepth) > 0:
+      ndepth = []
+      for node in cdepth:
+        yield node
+
+        if node.left is not None:
+          ndepth.append(node.left)
+        if node.right is not None:
+          ndepth.append(node.right)
+      cdepth = ndepth
 
   def pprint(self) -> None:
     print(_build_btree_string(self))
@@ -223,6 +247,27 @@ class BinaryTree:
     """
     return _get_bintree_properties(self).size
 
+  def create_graph(self, *args: Any, **kwargs: Any) -> nx.DiGraph:
+    digraph = nx.DiGraph(*args, **kwargs)
+
+    for node in self:
+      digraph.add_node(node.data)
+
+      if node.left is not None:
+        digraph.add_edge(node.data, node.left.data)
+      if node.right is not None:
+        digraph.add_edge(node.data, node.right.data)
+
+    return digraph
+
+  def save_graph(self):
+    graph = self.create_graph()
+    print("saving", graph)
+    nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
+    os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
+
+
+
 @dataclass
 class BinaryTreeProperties:
   height: int
@@ -296,21 +341,30 @@ def build(arr: List[NodeValue]) -> BinaryTree:
     root.insert(arr[i])
   return root
 
-class Tree:
-  def __init__(self):
-    raise NotImplementedError
+class AVLTree:
+  def __init__(self, data:NodeValue=None):
+    self.data = data
+    self.left = None
+    self.right = None
 
   def __eg__(self):
     pass
 
+class RedBlackTree(BinaryTree):
+  def __init__(self, data:Optional[NodeValue]=None) -> None:
+    super().__init__(data)
+
+    self.red = True
+    self.black = not self.red
+
 if __name__ == "__main__":
   arr = [35,28,31,59,23,55,67,50,56,30]
-  bintree = build(arr)
+  #bintree = build(arr)
+  bintree = BinaryTree(12)
+  bintree.insert(11)
+  bintree.insert(13)
+  bintree.insert(14)
   bintree.pprint()
-  bintree.remove(30)
-  bintree.pprint()
-  bintree.insert(30)
-  bintree.pprint()
-
   print(bintree.leaves)
   print(bintree.height)
+  bintree.save_graph()
