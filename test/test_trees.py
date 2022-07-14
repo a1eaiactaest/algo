@@ -62,15 +62,29 @@ class TestBinaryTree(unittest.TestCase):
     root = BinaryTree()
     self.assertEqual(root.size, 0)
 
-
   def test_height(self):
     root = BinaryTree()
     self.assertEqual(root.height, 0)
 
-  # TODO
-  def test_leaves(self):
+  def test_height_two(self):
+    root = BinaryTree(12)
+    root.right = BinaryTree(10)
+    self.assertEqual(root.height, 1)
+
+  def test_leaves_empty(self):
     root = BinaryTree()
     self.assertEqual(root.leaves, [])
+
+  def test_leaves(self):
+    root = BinaryTree(10)
+    self.assertEqual(root.leaves, [10])
+
+  def test_leaves_two(self):
+    root = BinaryTree(10)
+    root.left = BinaryTree(11)
+    root.right = BinaryTree(12)
+    root.right.right = BinaryTree(13)
+    self.assertEqual(root.leaves, [11,13])
 
 
 class TestBinaryTreeUtils(unittest.TestCase):
