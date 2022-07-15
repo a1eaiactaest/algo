@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Union, Optional, List, Any, Iterator
 
 import os
-import graphviz
 import networkx as nx
 
 NodeValue = Any
@@ -247,7 +246,11 @@ class BinaryTree:
     """
     return _get_bintree_properties(self).size
 
-  def create_graph(self, *args: Any, **kwargs: Any) -> nx.DiGraph:
+  def _create_graph(self, *args: Any, **kwargs: Any) -> nx.DiGraph:
+    """Create networkx Directional Graph
+
+    This is a helper method.
+    """
     digraph = nx.DiGraph(*args, **kwargs)
 
     for node in self:
@@ -260,13 +263,34 @@ class BinaryTree:
 
     return digraph
 
-  def save_graph(self):
-    graph = self.create_graph()
+  @property
+  def graph(self) -> nx.DiGraph:
+    """Create and return networkx Directional Graph.
+    """
+    return self._create_graph(self)
+
+  def save_graph(self) -> None:
+    """Save networkx Directinal Graph as dot file and then convert it to the svg file.
+    
+    **Usage: ** 
+
+      >> T = BinaryTree(12)
+      >> T.insert(11)
+      >> T.insert(13)
+      >> T.graph
+      <networkx.classes.digraph.DiGraph at 0x1113f8d60>
+
+      >> T.save_graph()
+      saving DiGraph with 3 nodes and 2 edges
+
+      # Now open file:///tmp/net.svg in your browser.
+      # SVG is rendered from dot file using graphviz. 
+
+    """
+    graph = self._create_graph()
     print("saving", graph)
     nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
     os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
-
-
 
 @dataclass
 class BinaryTreeProperties:
@@ -330,6 +354,7 @@ def _get_bintree_properties(root: BinaryTree) -> BinaryTreeProperties:
 
 def build(arr: List[NodeValue]) -> BinaryTree:
   """Build a tree from list and return it's node.
+
   :param arr: List representation of a tree, which is a list of node values.
   :type arr: [Any]
   :return: Root node of created binary tree.
@@ -364,6 +389,7 @@ if __name__ == "__main__":
   bintree.insert(11)
   bintree.insert(13)
   bintree.insert(14)
+  bintree.insert(12)
   bintree.pprint()
   print(bintree.leaves)
   print(bintree.height)
