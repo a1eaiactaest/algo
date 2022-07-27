@@ -383,19 +383,57 @@ class RedBlackTree(BinaryTree):
     self.black = not self.red
 
 class ListNode:
-  def __init__(self, val=0, next=None):
+  """Linked list node.
+  Can be treated as a linked list.
+  """
+  def __init__(self, val:NodeValue=0, next_node:Optional["ListNode"]=None):
     self.val = val
-    self.next = next
+    self.next = next_node
+
+  def __iter__(self) -> Iterator["ListNode"]:
+    cnode = self
+
+    while cnode: 
+      nnode = None
+      yield cnode
+      if cnode.next:
+        nnode = cnode.next
+      cnode = nnode
+
+  def __repr__(self) -> str:
+    return f"ListNode({self.val})" 
+
+  def pretty(self) -> None:
+    ret = "head->"
+    for node in list(self):
+      ret += f"{node.val}->"
+    ret += "tail"
+    print(ret)
+
+def array_to_ll(arr: list):
+  """Given array create a linked list.
+
+  Input: [1,2,3,4,5]
+  Output: 1->2->3->4->5->null
+
+  :param arr: input array 
+  :type arr: list
+  :return: Linked list containing values from :arr:
+  :rtype: ListNode
+  """
+
+  dummy = ListNode()
+  tail = dummy
+
+  for elem in arr:
+    tail.next = ListNode(elem)
+    tail = tail.next
+  return dummy.next
 
 if __name__ == "__main__":
-  arr = [35,28,31,59,23,55,67,50,56,30]
-  #bintree = build_binary_tree(arr)
-  bintree = BinaryTree(12)
-  bintree.insert(11)
-  bintree.insert(13)
-  bintree.insert(14)
-  bintree.insert(12)
-  bintree.pprint()
-  print(bintree.leaves)
-  print(bintree.height)
-  bintree.save_graph()
+  #arr = [35,28,31,59,23,55,67,50,56,30]
+  arr = [1,2,3,4,5]
+  ll = array_to_ll(arr)
+  print(ll)
+  print(list(ll))
+  ll.pretty()
