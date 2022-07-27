@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ads.trees import BinaryTree 
+from ads.structures import *
 from .utils import pprint_default
 
 import unittest

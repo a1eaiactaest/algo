@@ -3,7 +3,7 @@
 import os
 import sys
 import copy
-from typing import Union
+from typing import Union, List
 
 parent = os.path.basename(os.getcwd())
 if parent in ['ADS', 'ads']:
@@ -11,7 +11,8 @@ if parent in ['ADS', 'ads']:
 elif parent == 'test':
   sys.path.insert(0, '../ads')
   
-from trees import BinaryTree, build
+from structures import BinaryTree, build_binary_tree
+from sorting import Sortable
 
 def dfs_binary(tree:BinaryTree) -> list:
   """Traverse through a binary tree using Depth-first search.
@@ -71,7 +72,29 @@ def bfs_binary(tree:BinaryTree) -> list:
     ndepth = []
   return visited
 
+
+def binary_search(arr: List[Sortable], x: Sortable) -> bool:
+  """Search for a value in a list using the binary search algorithm.
+
+  """
+
+  if x < arr[0] or x > arr[-1]:
+    return False
+  
+  n = len(arr)
+  piv = n//2
+
+  if arr[piv] == x:
+    return True
+  elif arr[piv] > x:
+    return binary_search(arr[:piv], x)
+  elif arr[piv] < x:
+    return binary_search(arr[piv:], x)
+  return False
+
 if __name__ == "__main__":
   x = [35,28,31,59,23,55,67,50,56,30]
-  print(dfs_binary(build(x)))
+  print(dfs_binary(build_binary_tree(x)))
   print(dfs_binary(BinaryTree()))
+  print(x)
+  print(binary_search(x, 23))

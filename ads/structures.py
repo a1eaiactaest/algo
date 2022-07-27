@@ -352,7 +352,7 @@ def _get_bintree_properties(root: BinaryTree) -> BinaryTreeProperties:
   )
 
 
-def build(arr: List[NodeValue]) -> BinaryTree:
+def build_binary_tree(arr: List[NodeValue]) -> BinaryTree:
   """Build a tree from list and return it's node.
 
   :param arr: List representation of a tree, which is a list of node values.
@@ -382,9 +382,14 @@ class RedBlackTree(BinaryTree):
     self.red = True
     self.black = not self.red
 
+class ListNode:
+  def __init__(self, val=0, next=None):
+    self.val = val
+    self.next = next
+
 if __name__ == "__main__":
   arr = [35,28,31,59,23,55,67,50,56,30]
-  #bintree = build(arr)
+  #bintree = build_binary_tree(arr)
   bintree = BinaryTree(12)
   bintree.insert(11)
   bintree.insert(13)

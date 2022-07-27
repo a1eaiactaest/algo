@@ -11,7 +11,7 @@ parent = os.path.basename(os.getcwd())
 if parent == 'test':
   sys.path.insert(0,'../')
 
-from ads.trees import BinaryTree, build
+from ads.structures import BinaryTree, build_binary_tree
 
 class CaptureOutput(List[str]):
   """Catch stdout."""
@@ -30,7 +30,7 @@ class CaptureOutput(List[str]):
 
 def pprint_default(values: List[int]) -> List[str]:
   """Helper function for testing BinaryTree.pprint."""
-  root = build(values)
+  root = build_binary_tree(values)
   assert root is not None
 
   with CaptureOutput() as output:

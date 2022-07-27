@@ -4,7 +4,6 @@ from utils import timeit
 
 Sortable = Union[float, int, str]
 
-@timeit
 def bubblesort(arr: List[Sortable]) -> List[Sortable]:
   """Sort passed array in ascending order using bubble sort algorithm.
 
@@ -24,7 +23,6 @@ def bubblesort(arr: List[Sortable]) -> List[Sortable]:
         arr[i], arr[j] = arr[j], arr[i] # swap
   return arr
 
-@timeit
 def insertionsort(arr: List[Sortable]) -> List[Sortable]:
   """Sort passed array in ascending order using insertion sort algorithm.
 
@@ -46,7 +44,6 @@ def insertionsort(arr: List[Sortable]) -> List[Sortable]:
       j -= 1
   return arr 
 
-@timeit
 def selectionsort(arr: List[Sortable]) -> List[Sortable]:
   """Sort passed array in ascending order using selection sort algorithm.
 
@@ -70,7 +67,12 @@ def selectionsort(arr: List[Sortable]) -> List[Sortable]:
   return arr
 
 # Can't really time it with wrapper function, because mergesort is recursive.
+# Use function time_mergesort for timing, don't think it's accurate tho.
 def mergesort(arr: List[Sortable]) -> List[Sortable]:
+  """Sort passed array in ascending order using merge sort algorithm.
+
+  Time complexity because of recursion is O(n log n)
+  """
   if len(arr) <= 1:
     return arr
   elif len(arr) == 2:
