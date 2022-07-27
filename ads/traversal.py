@@ -73,28 +73,24 @@ def bfs_binary(tree:BinaryTree) -> list:
   return visited
 
 
-def binary_search(arr: List[Sortable], x: Sortable) -> bool:
+def binary_search(arr: List[Sortable], target: Sortable) -> int:
   """Search for a value in a list using the binary search algorithm.
-
   """
 
-  if x < arr[0] or x > arr[-1]:
-    return False
-  
   n = len(arr)
-  piv = n//2
-
-  if arr[piv] == x:
-    return True
-  elif arr[piv] > x:
-    return binary_search(arr[:piv], x)
-  elif arr[piv] < x:
-    return binary_search(arr[piv:], x)
-  return False
+  left = 0
+  right = n-1
+  while left <= right:
+    piv = (left+right)//2
+    if arr[piv] < target:
+      left = piv + 1
+    elif arr[piv] > target:
+      right = piv - 1
+    else:
+      return piv
+  return -1
 
 if __name__ == "__main__":
   x = [35,28,31,59,23,55,67,50,56,30]
-  print(dfs_binary(build_binary_tree(x)))
-  print(dfs_binary(BinaryTree()))
   print(x)
   print(binary_search(x, 23))
