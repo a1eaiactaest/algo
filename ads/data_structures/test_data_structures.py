@@ -1,9 +1,44 @@
-#!/usr/bin/env python3
-
-from ads.structures import *
-from .utils import pprint_default
-
 import unittest
+import sys
+
+try:
+  from StringIO import StringIO
+except ImportError:
+  from io import StringIO
+
+
+from binary_tree import *
+from linked_list import *
+
+class CaptureOutput(List[str]):
+  """Catch stdout."""
+
+  def __enter__(self) -> "CaptureOutput":
+    self._original_stdout = sys.stdout
+    self._temp_stdout = StringIO()
+    sys.stdout = self._temp_stdout
+    return self
+
+  def __exit__(self, *args: Any) -> None:
+    lines = self._temp_stdout.getvalue().splitlines()
+    self.extend(line.rstrip() for line in lines)
+    sys.stdout = self._original_stdout
+
+
+def pprint_default(values: List[int]) -> List[str]:
+  """Helper function for testing BinaryTree.pprint."""
+  root = build_binary_tree(values)
+  assert root is not None
+
+  with CaptureOutput() as output:
+    root.pprint()
+
+  return [line for line in output if line != ""]
+
+def pprint_linked_list(linked_list) -> str:
+  with CaptureOutput() as output:
+    linked_list.pretty()
+  return ''.join([line for line in output if line != ""])
 
 class TestBinaryTree(unittest.TestCase):
   def test_instance_empty_tree(self):
@@ -103,6 +138,26 @@ class TestBinaryTreeUtils(unittest.TestCase):
       '  │   │   └─-(30)', 
       '  └─-(28)', 
       '      └─-(23)'])
+
+
+class TestLinkedList(unittest.TestCase):
+  def test_init(self):
+    arr = [1,2,3,4,5]
+    ll = array_to_ll(arr)
+    self.assertEqual(repr(ll), 'ListNode(1)')
+    self.assertEqual(type(ll), ListNode)
+    self.assertEqual(str(ll), 'ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5, None)))))')
+
+  def test_pretty_print(self):
+    arr = [1,2,3,4,5]
+    ll = array_to_ll(arr)
+    self.assertEqual(pprint_linked_list(ll), 'head->1->2->3->4->5->tail')
+
+  def test_merge(self):
+    a1 = array_to_ll([1,2,3,4,5])
+    a2 = array_to_ll([6,7,8,9,10])
+    merged = merge(a1, a2)
+    self.assertEqual(list(merged), [1,2,3,4,5,6,7,8,9,10])
 
 if __name__ == "__main__":
   unittest.main()
