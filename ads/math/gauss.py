@@ -15,19 +15,27 @@ def trick(n:int) -> int:
   return (n * (n + 1)) // 2
 
 def distribution(x: float, mu:float = 0.0, sigma:float = 1.0) -> float:
+  # NOTE: https://keisan.casio.com/exec/system/1180573188
   """Plot Gaussian.
   Used in statistics.
-  https://en.wikipedia.org/wiki/Normal_distribution
+  :reference: https://en.wikipedia.org/wiki/Normal_distribution
+
+  _Example:
+    >>> distribution(1)
+    0.24197072451914337
+
   """
-  z = 1./sigma * math.sqrt(2*math.pi)
-  return z*pow(math.e, -(x-mu)**2/(2*sigma*sigma))
+
+  z = 1 / math.sqrt(2*math.pi*sigma)
+  return z*math.e**(-0.5*((x-mu)/sigma)**2)
+
 
 def plot_distribution() -> None:
   X = np.arange(-5, 5, .1)
   Y1 = list(map(lambda x: distribution(x), X))
   Y2 = list(map(lambda x: distribution(x, 2, 1), X))
   plt.plot(X, Y1)
-  plt.bar(X, Y1)
+  plt.plot(X, Y2)
   plt.show()
 
 
@@ -35,4 +43,5 @@ if __name__ == "__main__":
   print(trick(100))
   print(distribution(24))
   print(distribution(1,4,2))
+  print(distribution(1))
   plot_distribution()
