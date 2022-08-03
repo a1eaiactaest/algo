@@ -78,18 +78,21 @@ class Matrix:
 
   # **** Comparison Operators ****
   def __eq__(self, other) -> bool:
-    return np.array_equal(self, other)
+    return self.rows == other.rows
+
+  def __ne__(self, other) -> bool:
+    return not (self.rows == other.rows)
 
   def __gt__(self, other) -> bool:
     return (self.shape > other.shape)
 
   # **** Arithmetic Operators ****
-  def __mul__(self, other):
+  def __mul__(self, other) -> "Matrix":
     if type(other) is int:
       return self.rows * other
     elif type(other) is Matrix:
       if self.shape == other.shape:
-        return Matrix(self.rows * other.rows).rows
+        return Matrix(self.rows * other.rows)
       if self.n != other.m:
         raise ArithmeticError(
           f"can't multiply matrix of shape {self.shape} by other matrix of shape {other.shape}."
@@ -101,13 +104,14 @@ class Matrix:
           product = vectors.dot(row, col) 
           ret_matrix[i,j] = product
       
-    return Matrix(ret_matrix).rows
+    return Matrix(ret_matrix)
 
-
+  def __repr__(self) -> str:
+    pstr = ('\n'+' '*7).join([str(row) for row in self.rows])
+    return f"Matrix({pstr})"
 
 
 if __name__ == "__main__":
-  """
   m1 = np.array([[1,2,3],[4,5,6],[7,8,9], [10,11,12]])
   for i in range(m1.shape[1]):
     print(list(m1[:, i]))
@@ -115,8 +119,8 @@ if __name__ == "__main__":
   M1 = Matrix(m1)
   M2 = Matrix(m2)
   print(M1 == M2)
+  print(M1 != M2)
   print(M1 > M2)
-  """
   A = Matrix(np.array([[1,4,-2], [3,5,-6]]))
   B = Matrix(np.array([[5,2,8], [3,6,4]]))
   print(A*B)

@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import math
 
@@ -31,6 +30,7 @@ def distribution(x: float, mu:float = 0.0, sigma:float = 1.0) -> float:
 
 
 def plot_distribution() -> None:
+  import matplotlib.pyplot as plt
   X = np.arange(-5, 5, .1)
   Y1 = list(map(lambda x: distribution(x), X))
   Y2 = list(map(lambda x: distribution(x, 2, 1), X))
@@ -41,6 +41,7 @@ def plot_distribution() -> None:
 
 if __name__ == "__main__":
   print(trick(100))
+  print(trick(-1))
   print(distribution(24))
   print(distribution(1,4,2))
   print(distribution(1))
