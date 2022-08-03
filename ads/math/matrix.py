@@ -1,6 +1,8 @@
 import numpy as np
 from typing import List, Union, Tuple
 
+import vectors
+
 class Matrix:
   """Matrix class in python.
 
@@ -86,12 +88,34 @@ class Matrix:
     if type(other) is int:
       return self.rows * other
     elif type(other) is Matrix:
-      raise NotImplementedError
+      #raise NotImplementedError
+      if self.n != other.m:
+        raise ArithmeticError(
+          f"can't multiply matrix of shape {self.shape} by other matrix of shape {other.shape}."
+        )
+      ret_matrix = np.zeros((self.m, other.n))
+      for row, i in zip(self.rows, range(self.m)): 
+        for j in range(other.n):
+          col = other.rows[:,j]
+          product = vectors.dot(row, col) 
+          ret_matrix[i,j] = product
+      
+    return Matrix(ret_matrix).rows
+
+
+
 
 if __name__ == "__main__":
+  """
   m1 = np.array([[1,2,3],[4,5,6],[7,8,9], [10,11,12]])
+  for i in range(m1.shape[1]):
+    print(list(m1[:, i]))
   m2 = np.array([[1,2,3],[4,5,6],[7,8,9], [10,11,12], [13,14,15]])
   M1 = Matrix(m1)
   M2 = Matrix(m2)
   print(M1 == M2)
   print(M1 > M2)
+  """
+  A = Matrix(np.array([[1,4,-2], [3,5,-6]]))
+  B = Matrix(np.array([[5,2,8,-1], [3,6,4,5], [-2,9,7,-3]]))
+  print(A*B)
