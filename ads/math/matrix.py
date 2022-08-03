@@ -88,7 +88,8 @@ class Matrix:
     if type(other) is int:
       return self.rows * other
     elif type(other) is Matrix:
-      #raise NotImplementedError
+      if self.shape == other.shape:
+        return Matrix(self.rows * other.rows).rows
       if self.n != other.m:
         raise ArithmeticError(
           f"can't multiply matrix of shape {self.shape} by other matrix of shape {other.shape}."
@@ -117,5 +118,5 @@ if __name__ == "__main__":
   print(M1 > M2)
   """
   A = Matrix(np.array([[1,4,-2], [3,5,-6]]))
-  B = Matrix(np.array([[5,2,8,-1], [3,6,4,5], [-2,9,7,-3]]))
+  B = Matrix(np.array([[5,2,8], [3,6,4]]))
   print(A*B)
