@@ -84,6 +84,13 @@ class Matrix:
       ret.append(row[i])
     return ret
 
+  def identity(self) -> "Matrix":
+    ret = [
+      [0 if column_n != row_n else 1 for column_n in range(self.m)]
+      for row_n in range(self.n)
+    ]
+    return Matrix(ret)
+
   # **** Comparison Operators ****
   def __eq__(self, other) -> bool:
     return self.rows == other.rows
@@ -136,3 +143,4 @@ if __name__ == "__main__":
   B = Matrix([[2,2],[2,2]])
   AB = Matrix([[4,4],[4,4]])
   print(A*B)
+  print(AB.identity())
