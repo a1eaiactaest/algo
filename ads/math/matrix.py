@@ -119,6 +119,9 @@ class Matrix:
       
     return Matrix(ret_matrix)
 
+  def __matmul__(self, other):
+    return self * other
+
   def __repr__(self) -> str:
     pstr = ('\n'+' '*7).join([str(row) for row in self.rows])
     return f"Matrix({pstr})"
@@ -142,5 +145,8 @@ if __name__ == "__main__":
   A = Matrix([[2,2],[2,2]])
   B = Matrix([[2,2],[2,2]])
   AB = Matrix([[4,4],[4,4]])
+  print("mul")
   print(A*B)
+  print("matmul")
+  print(A@B)
   print(AB.identity())
