@@ -62,3 +62,5 @@ class TestMatrix(unittest.TestCase):
     AB = matrix.Matrix([[8,8],[8,8]])
     ABi = matrix.Matrix([[1,0],[0,1]])
     self.assertEqual(AB.identity(), ABi)
+
+# TODO: fib tests
