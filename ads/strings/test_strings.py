@@ -3,6 +3,7 @@ import unittest
 import ints
 import parentheses
 import postfix
+import anagram
 
 class TestInts(unittest.TestCase):
   def test_case(self):
@@ -22,5 +23,16 @@ class TestPostfix(unittest.TestCase):
     self.assertEqual(postfix.eval('3 3 +'), 6.0)
     self.assertEqual(postfix.eval('6 9 + 6 9 * +'), 69.0) # hehe
 
+class TestAnagram(unittest.TestCase):
+  def test_valid(self):
+    expected = [
+        ('', '', True),
+        ('', 'a', False),
+        ('a', 'b', False),
+        ('bleat', 'table', True),
+        ('foo', 'of', False),
+        ('foo', 'ffo', False),
+    ]
 
-
+    for e in expected:
+      self.assertEqual(anagram.valid(e[0], e[1]), e[2])
