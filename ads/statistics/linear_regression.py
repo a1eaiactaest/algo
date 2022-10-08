@@ -1,30 +1,60 @@
-from typing import List, Union
-def least_squares(X: List[Union[int,float]], Y:List[Union[int,float]]):
+from typing import List
+
+class LinearRegression:
+  def __init__(self, slope: float, y_intercept: float) -> None:
+    self.slope = slope
+    self.y_intercept = y_intercept
+
+  def __repr__(self) -> str:
+    return f'LinearRegression(slope={self.slope}, y_intercept={self.y_intercept})'
+
+
+def least_squares(X: List[int | float], Y:List[int | float]) -> "LinearRegression":
+  '''Linear regression using the least squares method.
+
+  Reference: https://en.wikipedia.org/wiki/Least_squares
+
+  :param X: Data on X axis.
+  :type X: List[int | float]
+  :param Y: Data on Y axis.
+  :type Y: List[int | float]
+  :return: Computed slope of a line and it's y-intercept conveyed in LinearRegression class.
+  :rtype: LinearRegression
+  '''
+
   assert len(X) == len(Y)
-
-  N = len(X)
-
-  X_mean = sum(X)/len(X)
-  Y_mean = sum(Y)/len(Y)
   
-  X_sigma = sum(X)
-  Y_sigma = sum(Y)
+  xy_sigma = 0
+  x_square_sigma = 0
 
-  XY_sigma = 0
-  X_squared_sigma = 0
+  for x, y in zip(X,Y):
+    xy_sigma += x*y
+    x_square_sigma += x**2
 
-  for x,y in zip(X,Y):
-    XY_sigma += x*y
-    X_squared_sigma += x**2
-    
-  slope = ((N * XY_sigma) - (X_sigma * Y_sigma)) / ((N * X_squared_sigma) - (X_sigma)**2)
-  y_intercept = (Y_sigma - slope * X_sigma) / N
+  slope = ((len(X) * xy_sigma) - (sum(X) * sum(Y))) / ((len(X) * x_square_sigma) - (sum(X))**2)
+  y_intercept = (sum(Y) - slope * sum(X)) / len(X)
 
-  slope_intercept = lambda x: (slope * x) + y_intercept
+  return LinearRegression(slope, y_intercept)
 
-  estimates = []
-  for x,y in zip(X,Y):
-    estimation_y = slope_intercept(x)
-    estimates.append(estimation_y)
 
-  return estimates, slope, y_intercept
+def predict(linreg: "LinearRegression", data: List[int | float]) -> List[float]:
+  '''Fit line given linear regression values.
+
+  Take :data: as y axis values, return x axis values prediction given slope and y_intercept.
+
+  :param linreg: Linear regression values like slope and y-intercept.
+  :type linreg: LinearRegression
+  :param data: y axis values 
+  :type data: List[int | float]
+  :return: x axis values
+  :rtype: List[float]
+  '''
+
+  ret = []
+  slope_intercept = lambda x: (linreg.slope * x) + linreg.y_intrecept
+  
+  for v in range(len(data)):
+    ret.append(slope_intercept(v))
+
+  return ret
+

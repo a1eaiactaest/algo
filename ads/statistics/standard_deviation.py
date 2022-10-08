@@ -1,6 +1,6 @@
 from typing import List, Union
 
-def standard_deviation(sample:List[Union[int,float]]) -> float:
+def stdev(sample:List[Union[int,float]]) -> float:
   mean = sum(sample)/len(sample)
   acc = 0
   for x in sample:
