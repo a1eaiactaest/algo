@@ -365,3 +365,17 @@ def build_binary_tree(arr: List[NodeValue]) -> BinaryTree:
   for i in range(1, len(arr)):
     root.insert(arr[i])
   return root
+
+def dfs(node: Optional[BinaryTree], target: NodeValue) -> bool:
+  if not node:
+    return False
+  if node.right and not node.left:
+    return target == node.val
+  return (dfs(node.left, target) or dfs(node.right, target))
+
+
+if __name__ == "__main__":
+  x = build_binary_tree([50,None,54,98,6,None,None,None,34])
+  x.save_graph()
+
+

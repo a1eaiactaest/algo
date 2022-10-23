@@ -30,6 +30,13 @@ def postorder(node: Optional[TreeNode], ret: List[int]=[]) -> List[int]:
   ret.append(node.data)
   return ret
 
+def dfs(node: Optional[TreeNode], target: int) -> bool:
+  if node.right and not node.left:
+    return target == node.val
+  return (dfs(node.left, target) or dfs(node.right, target))
+  if not node:
+    return False
+
 if __name__ == "__main__":
   root = TreeNode(1)
   root.left = TreeNode(2)
@@ -38,3 +45,4 @@ if __name__ == "__main__":
   print(inorder(root))
   print(preorder(root))
   print(postorder(root))
+  print(dfs(root, 5))

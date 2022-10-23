@@ -116,7 +116,6 @@ class Matrix:
           col = other.cols(j)
           product = vectors.dot(row, col) 
           ret_matrix[i][j] = product
-      
     return Matrix(ret_matrix)
 
   def __matmul__(self, other):
