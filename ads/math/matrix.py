@@ -125,11 +125,13 @@ class Matrix:
     pstr = ('\n'+' '*7).join([str(row) for row in self.rows])
     return f"Matrix({pstr})"
 
-
 def zeros(shape: Tuple[int]) -> List[List[int]]:
   rows, cols = shape
   ret = [[0 for _ in range(cols)] for _ in range(rows)]
   return ret
+
+def strassen(m1: "Matrix", m2: "Matrix"):
+  raise NotImplementedError
 
 if __name__ == "__main__":
   m1 = [[1,2,3],[4,5,6],[7,8,9], [10,11,12]]
