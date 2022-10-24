@@ -210,3 +210,4 @@ class TestExponentation(unittest.TestCase):
       e = s[1]
       self.assertEqual(exp.exp(base, e), pow(base, e))
       self.assertEqual(exp.exp_r(base, e), pow(base, e))
+      self.assertEqual(exp.exp_r(base, e), exp.exp(base, e))
