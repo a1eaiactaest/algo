@@ -5,6 +5,7 @@ import gauss
 import vectors
 import matrix
 import collatz
+import find_max
 
 class TestGauss(unittest.TestCase):
   def test_trick(self):
@@ -182,3 +183,16 @@ class TestCollatz(unittest.TestCase):
         1,
         ])
     )
+
+class TestMinMax(unittest.TestCase):
+  def test_max(self):
+    sample = np.random.random_sample(100)
+    self.assertEqual(find_max.find_max(sample), max(sample))
+
+  def test_max_recursive(self):
+    sample = np.random.random_sample(100)
+    self.assertEqual(find_max.find_max_r(sample, 0, len(sample)-1), max(sample))
+
+  def test_max_recursive_against_iterative(self):
+    sample = np.random.random_sample(100)
+    self.assertEqual(find_max.find_max_r(sample, 0, len(sample)-1), find_max.find_max(sample))
