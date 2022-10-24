@@ -95,14 +95,14 @@ class BinaryTree:
     :return: Mdodified binary tree.
     :rtype: BinaryTree
     """
-    if self.data == None:
+    if self.data is None:
       self.data = data
       return
 
     if data == self.data:
       return
 
-    if data < self.data and self.left is not None:
+    if data < self.data and self.left is not None: # TODO: Resolve issue #2
       return self.left.insert(data)
     if data > self.data and self.right is not None:
       return self.right.insert(data)
