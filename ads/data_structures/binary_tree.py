@@ -373,6 +373,17 @@ def dfs(node: Optional[BinaryTree], target: NodeValue) -> bool:
     return target == node.val
   return (dfs(node.left, target) or dfs(node.right, target))
 
+# TODO test it
+def merge(root1: Optional[BinaryTree], root2: Optional[BinaryTree]) -> BinaryTree:
+  if root1 and root2:
+    root1.val += root2.val
+    root1.left = merge(root1.left, root2.left)
+    root1.right = merge(root1.right, root2.right)
+    return root1
+  if not root1 and not root2:
+    return None
+  if not root1: return root2
+  if not root2: return root1
 
 if __name__ == "__main__":
   x = build_binary_tree([50,None,54,98,6,None,None,None,34])
