@@ -6,6 +6,10 @@ import vectors
 import matrix
 import collatz
 import find_max
+import exponentation as exp
+
+
+ROUND = 5
 
 class TestGauss(unittest.TestCase):
   def test_trick(self):
@@ -196,3 +200,13 @@ class TestMinMax(unittest.TestCase):
   def test_max_recursive_against_iterative(self):
     sample = np.random.random_sample(100)
     self.assertEqual(find_max.find_max_r(sample, 0, len(sample)-1), find_max.find_max(sample))
+
+
+class TestExponentation(unittest.TestCase):
+  def test_case(self):
+    out_set = [(2.0, 10, 1024.0), (2.1, 3, 9.261), (2.0,  -2, 0.25)]
+    for s in out_set:
+      base = s[0]
+      e = s[1]
+      self.assertEqual(exp.exp(base, e), pow(base, e))
+      self.assertEqual(exp.exp_r(base, e), pow(base, e))
