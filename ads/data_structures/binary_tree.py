@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Union, Optional, List, Any, Iterator
+from typing import Iterator
 
 import os
 from pprint import pformat
@@ -25,6 +25,30 @@ class BinaryTree:
 
   def __repr__(self) -> str:
     return str(self.root)
+
+  def __iter__(self) -> Iterator[NodeVal]:
+    cdepth = [self.root]
+    while len(cdepth) > 0:
+      ndepth = []
+      for node in cdepth:
+        yield node.val
+        if node.left is not None:
+          ndepth.append(node.left)
+        if node.right is not None:
+          ndepth.append(node.right)
+      cdepth = ndepth
+
+  @property
+  def size(self) -> int:
+    return _get_tree_props(self).size
+
+  @property
+  def depth(self) -> int:
+    return _get_tree_props(self).max_depth
+
+  @property
+  def min_depth(self) -> int:
+    return _get_tree_props(self).min_depth
 
   @property
   def empty(self) -> bool:
@@ -139,6 +163,68 @@ class BinaryTree:
         else:
           return cnode.right
 
+@dataclass
+class BinaryTreeProps:
+  height: int
+  size: int
+  is_complete: bool
+  leaf_count: int
+  min_node: NodeVal
+  max_node: NodeVal
+  min_depth: int
+  max_depth: int
+
+def _get_tree_props(tree: BinaryTree) -> BinaryTreeProps:
+  min_node = tree.root.val
+  max_node = tree.root.val
+  size = 0
+  leaf_count = 0
+  min_depth = 0
+  max_depth = -1
+  is_complete = True
+
+  none_nodes = False
+
+  cdepth = [tree.root]
+  while len(cdepth) > 0:
+    max_depth += 1
+    ndepth = []
+
+    for node in cdepth:
+      val = node.val
+      if val is not None:
+        size += 1
+        min_node = min(val, min_node)
+        max_node = min(val, max_node)
+
+        if node.left is None and node.right is None:
+          if min_depth == 0:
+            min_depth = max_depth
+          leaf_count += 1
+        if node.left is not None:
+          ndepth.append(node.left)
+          is_complete = not none_nodes
+        else:
+          none_nodes = True
+        
+        if node.right is not None:
+          ndepth.append(node.right)
+          is_complete = not none_nodes
+        else:
+          none_nodes = True
+    cdepth = ndepth
+
+  return BinaryTreeProps(
+    height=max_depth,
+    size=size,
+    is_complete=is_complete,
+    leaf_count=leaf_count,
+    min_node=min_node,
+    max_node=max_node,
+    min_depth=min_depth,
+    max_depth=max_depth,
+  )
+
 def _build_btree_string(root: BinaryTree, rec:bool=False) -> str:
   if root is None:
     return [], 0
@@ -179,3 +265,4 @@ if __name__ == "__main__":
   print(t)
   t.remove(10)
   print(t)
+  print(list(t))
