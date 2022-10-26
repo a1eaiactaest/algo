@@ -121,6 +121,10 @@ class TestBinaryTree(unittest.TestCase):
     root.right.right = BinaryTree(13)
     self.assertEqual(root.leaves, [11,13])
 
+  def test_build_binary_tree(self):
+    pass
+
+
 
 class TestBinaryTreeUtils(unittest.TestCase):
   def test_pretty_print(self):
