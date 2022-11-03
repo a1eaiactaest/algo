@@ -30,7 +30,7 @@ class BinaryTree:
     # Use .save_graph for a detailed view in the tree.
     return f"BinaryTree({str(self.root)})"
 
-  def __iter__(self) -> Iterator[NodeVal]:
+  def _iter_helper(self) -> Iterator[Node]:
     cdepth = [self.root]
     while len(cdepth) > 0:
       ndepth = []
@@ -41,6 +41,10 @@ class BinaryTree:
         if node.right is not None:
           ndepth.append(node.right)
       cdepth = ndepth
+
+  def __iter__(self) -> Iterator[NodeVal]:
+    for node in self._iter_helper():
+      yield node.val
 
   @property
   def size(self) -> int:
@@ -170,7 +174,7 @@ class BinaryTree:
   def _create_graph(self, *args: Any, **kwargs: Any) -> nx.DiGraph:
     digraph = nx.DiGraph(*args, **kwargs)
 
-    for node in self:
+    for node in self._iter_helper():
       digraph.add_node(node.val)
 
       if node.left is not None:
@@ -263,3 +267,17 @@ if __name__ == "__main__":
   print(list(t))
   print(type(t))
   t.save_graph()
+  print(BinaryTree())
+
+  print('*** DEBUG ***')
+  ll = range(10)
+  v = BinaryTree()
+  for l in ll:
+    v.insert(l)
+  v.insert(5)
+  v.insert(5)
+  v.insert(5)
+  v.insert(5)
+  print(v)
+  v.save_graph()
+  print(list(v))
