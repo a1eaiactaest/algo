@@ -1,4 +1,5 @@
 import unittest
+import random
 import sys
 
 try:
@@ -7,10 +8,10 @@ except ImportError:
   from io import StringIO
 
 
-from binary_tree import *
+import binary_tree as bt
 from linked_list import *
 
-class CaptureOutput(List[str]):
+class CaptureOutput(list[str]):
   """Catch stdout."""
 
   def __enter__(self) -> "CaptureOutput":
@@ -24,17 +25,6 @@ class CaptureOutput(List[str]):
     self.extend(line.rstrip() for line in lines)
     sys.stdout = self._original_stdout
 
-
-def pprint_default(values: List[int]) -> List[str]:
-  """Helper function for testing BinaryTree.pprint."""
-  root = build_binary_tree(values)
-  assert root is not None
-
-  with CaptureOutput() as output:
-    root.pprint()
-
-  return [line for line in output if line != ""]
-
 def pprint_linked_list(linked_list) -> str:
   with CaptureOutput() as output:
     linked_list.pretty()
@@ -42,107 +32,114 @@ def pprint_linked_list(linked_list) -> str:
 
 class TestBinaryTree(unittest.TestCase):
   def test_instance_empty_tree(self):
-    root = BinaryTree()
-    self.assertEqual(type(root), BinaryTree)
-    del root
+    n = bt.Node(1337)
+    root = bt.BinaryTree(n)
+    self.assertEqual(type(root), bt.BinaryTree)
+    del root, n
 
   def test_instance_tree(self):
-    root = BinaryTree(1337)
-    self.assertEqual(type(root), BinaryTree)
+    n = bt.Node(1337)
+    root = bt.BinaryTree(n)
+    self.assertEqual(type(root), bt.BinaryTree)
+    del root
+
+  def test_instance_tree_with_int(self):
+    root = bt.BinaryTree(1337)
+    self.assertEqual(type(root), bt.BinaryTree)
     del root
 
   def test_repr_empty(self):
-    root = BinaryTree()
-    self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
+    root = bt.BinaryTree()
+    self.assertEqual(repr(root), 'BinaryTree(None)')
     del root
 
   def test_repr(self):
-    root = BinaryTree(1337)
-    self.assertEqual(repr(root), 'BinaryTree(data=1337, right=None, left=None)')
+    root = bt.BinaryTree(1337)
+    self.assertEqual(repr(root), "BinaryTree({'1337': (None, None)})")
     del root
 
   def test_insert(self):
-    root = BinaryTree(10)
-    self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
+    root = bt.BinaryTree(10)
+    self.assertEqual(repr(root), "BinaryTree({'10': (None, None)})")
     root.insert(11)
-    self.assertEqual(repr(root), 'BinaryTree(data=10, right=BinaryTree(data=11, right=None, left=None), left=None)')
+    self.assertEqual(repr(root), "BinaryTree({'10': (None, {'11': (None, None)})})")
     root.insert(9)
-    self.assertEqual(repr(root), 'BinaryTree(data=10, right=BinaryTree(data=11, right=None, left=None), left=BinaryTree(data=9, right=None, left=None))')
+    self.assertEqual(repr(root), "BinaryTree({'10': ({'9': (None, None)}, {'11': (None, None)})})")
     del root
 
   def test_insert_on_empty(self):
-    root = BinaryTree()
+    root = bt.BinaryTree()
     root.insert(10)
-    self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
+    self.assertEqual(repr(root), "BinaryTree({'10': (None, None)})")
     del root
 
   def test_remove_on_one_node(self):
-    root = BinaryTree(10)
-    self.assertEqual(repr(root), 'BinaryTree(data=10, right=None, left=None)')
+    root = bt.BinaryTree(10)
+    self.assertEqual(repr(root), "BinaryTree({'10': (None, None)})")
     root.remove(10)
-    self.assertEqual(repr(root), 'BinaryTree(data=None, right=None, left=None)')
+    self.assertEqual(repr(root), "BinaryTree({'None': (None, None)})")
 
   def test_size(self):
-    root = BinaryTree(10)
+    root = bt.BinaryTree(10)
     root.insert(11)
     root.insert(12)
     root.insert(15)
     self.assertEqual(root.size, 4)
 
   def test_size_one_node(self):
-    root = BinaryTree(10)
+    root = bt.BinaryTree(10)
     self.assertEqual(root.size, 1)
 
   def test_size_empty(self):
-    root = BinaryTree()
+    root = bt.BinaryTree()
     self.assertEqual(root.size, 0)
 
-  def test_height(self):
-    root = BinaryTree()
-    self.assertEqual(root.height, 0)
+  def test_depth(self):
+    root = bt.BinaryTree()
+    self.assertEqual(root.depth, -1)
 
   def test_height_two(self):
-    root = BinaryTree(12)
-    root.right = BinaryTree(10)
-    self.assertEqual(root.height, 1)
+    root = bt.BinaryTree(12)
+    root.insert(11)
+    self.assertEqual(root.depth, 1)
 
   def test_leaves_empty(self):
-    root = BinaryTree()
+    root = bt.BinaryTree()
     self.assertEqual(root.leaves, [])
 
   def test_leaves(self):
-    root = BinaryTree(10)
+    root = bt.BinaryTree(10)
     self.assertEqual(root.leaves, [10])
 
   def test_leaves_two(self):
-    root = BinaryTree(10)
-    root.left = BinaryTree(11)
-    root.right = BinaryTree(12)
-    root.right.right = BinaryTree(13)
-    self.assertEqual(root.leaves, [11,13])
+    root = bt.BinaryTree(10)
+    root.insert(11)
+    root.insert(12)
+    root.insert(13)
+    root.insert(9)
+    root.insert(6)
+    self.assertEqual(root.leaves, [6,13])
 
-  def test_build_binary_tree(self):
-    pass
+  def test_search_empty(self):
+    root = bt.BinaryTree()
+    with self.assertRaises(IndexError):
+      self.assertFalse(root.search(1337))
 
-
-
-class TestBinaryTreeUtils(unittest.TestCase):
-  def test_pretty_print(self):
-    lines = pprint_default([10])
-    self.assertEqual(lines, ['-(10)'])
-    lines = pprint_default([35,28,31,59,23,55,67,50,56,30])
-    self.assertEqual(lines, [
-      '      ┌─-(67)', 
-      '  ┌─-(59)', 
-      '  │   │   ┌─-(56)', 
-      '  │   └─-(55)', 
-      '  │       └─-(50)', 
-      '-(35)', 
-      '  │   ┌─-(31)', 
-      '  │   │   └─-(30)', 
-      '  └─-(28)', 
-      '      └─-(23)'])
-
+  def test_search_exist(self):
+    sample = random.sample(range(0, 1000), 100)
+    x = sample[-1] # pick right edge case
+    root = bt.BinaryTree()
+    for v in sample:
+      root.insert(v)
+    self.assertTrue(root.search(x))
+    
+  def test_search_nonexist(self):
+    sample = random.sample(range(0, 1000), 100)
+    x = 1001 
+    root = bt.BinaryTree()
+    for v in sample:
+      root.insert(v)
+    self.assertFalse(root.search(x))
 
 class TestLinkedList(unittest.TestCase):
   def test_init(self):
