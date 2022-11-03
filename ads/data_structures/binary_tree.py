@@ -16,7 +16,7 @@ class Node:
     self.parent: Node | None = None
 
   def __repr__(self) -> str:
-    s = pformat({f"{self.val}": (self.left, self.right)}, depth=1)
+    s = pformat({f"{self.val}": (self.left, self.right)}, depth=2)
     return s
 
 class BinaryTree:
@@ -62,11 +62,36 @@ class BinaryTree:
   def empty(self) -> bool:
     return self.root is None
 
+  @property
+  def leaves(self) -> list[NodeVal]:
+    cdepth = [self.root]
+    leaves = []
+
+    if self.empty:
+      return leaves
+
+    while len(cdepth) > 0:
+      ndepth = []
+      for node in cdepth:
+        if node.left is None and node.right is None:
+          if node.val is not None:
+            leaves.append(node.val)
+            continue
+        if node.left is not None:
+          ndepth.append(node.left)
+        if node.right is not None:
+          ndepth.append(node.right)
+      cdepth = ndepth
+    return leaves
+
   def _insert_helper(self, val: NodeVal) -> None:
     node = Node(val)
     if self.empty:
       self.root = node
+      return
     else:
+      if self.search(val):
+        return 
       p = self.root
       if p is None:
         return None
@@ -189,10 +214,13 @@ class BinaryTree:
     return self._create_graph()
 
   def save_graph(self) -> None:
-    graph = self._create_graph()
-    print('saving', graph)
-    nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
-    os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
+    try:
+      graph = self._create_graph()
+      print('saving', graph)
+      nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
+      os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
+    except AttributeError:
+      raise AttributeError("Can't create graph from a empty tree. Try adding nodes.")
 
 @dataclass
 class BinaryTreeProps:
@@ -206,13 +234,29 @@ class BinaryTreeProps:
   max_depth: int
 
 def _get_tree_props(tree: BinaryTree) -> BinaryTreeProps:
-  min_node = tree.root.val
-  max_node = tree.root.val
   size = 0
   leaf_count = 0
   min_depth = 0
   max_depth = -1
   is_complete = True
+
+  if tree.empty:
+   min_node = None
+   max_node = None
+   is_complete = False
+   return BinaryTreeProps(
+    height=max_depth,
+    size=size,
+    is_complete=is_complete,
+    leaf_count=leaf_count,
+    min_node=min_node,
+    max_node=max_node,
+    min_depth=min_depth,
+    max_depth=max_depth,
+  )
+
+  min_node = tree.root.val
+  max_node = tree.root.val
 
   none_nodes = False
 
@@ -270,14 +314,5 @@ if __name__ == "__main__":
   print(BinaryTree())
 
   print('*** DEBUG ***')
-  ll = range(10)
-  v = BinaryTree()
-  for l in ll:
-    v.insert(l)
-  v.insert(5)
-  v.insert(5)
-  v.insert(5)
-  v.insert(5)
-  print(v)
-  v.save_graph()
-  print(list(v))
+  root = BinaryTree()
+  root.search(1337)
