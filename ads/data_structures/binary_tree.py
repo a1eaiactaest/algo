@@ -16,22 +16,26 @@ class Node:
     self.parent: Node | None = None
 
   def __repr__(self) -> str:
-    s = pformat({f"{self.val}": (self.left, self.right)})
-    return f"Node({s})"
+    s = pformat({f"{self.val}": (self.left, self.right)}, depth=1)
+    return s
 
 class BinaryTree:
-  def __init__(self, root: Node | None = None):
+  def __init__(self, root: Node | int | None = None):
+    # Transform empty value to the Node.
+    if type(root) is int:
+      root = Node(root)
     self.root = root
 
   def __repr__(self) -> str:
-    return str(self.root)
+    # Use .save_graph for a detailed view in the tree.
+    return f"BinaryTree({str(self.root)})"
 
   def __iter__(self) -> Iterator[NodeVal]:
     cdepth = [self.root]
     while len(cdepth) > 0:
       ndepth = []
       for node in cdepth:
-        yield node.val
+        yield node
         if node.left is not None:
           ndepth.append(node.left)
         if node.right is not None:
