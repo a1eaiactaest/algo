@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Iterator
+from typing import Iterator, Any
 
 import os
 from pprint import pformat
@@ -163,6 +163,29 @@ class BinaryTree:
         else:
           return cnode.right
 
+  def _create_graph(self, *args: Any, **kwargs: Any) -> nx.DiGraph:
+    digraph = nx.DiGraph(*args, **kwargs)
+
+    for node in self:
+      digraph.add_node(node.val)
+
+      if node.left is not None:
+        digraph.add_edge(node.val, node.left.val)
+      if node.right is not None:
+        digraph.add_edge(node.val, node.right.val)
+
+    return digraph
+
+  @property
+  def graph(self) -> nx.DiGraph:
+    return self._create_graph()
+
+  def save_graph(self) -> None:
+    graph = self._create_graph()
+    print('saving', graph)
+    nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
+    os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
+
 @dataclass
 class BinaryTreeProps:
   height: int
@@ -206,7 +229,7 @@ def _get_tree_props(tree: BinaryTree) -> BinaryTreeProps:
           is_complete = not none_nodes
         else:
           none_nodes = True
-        
+
         if node.right is not None:
           ndepth.append(node.right)
           is_complete = not none_nodes
@@ -225,44 +248,14 @@ def _get_tree_props(tree: BinaryTree) -> BinaryTreeProps:
     max_depth=max_depth,
   )
 
-def _build_btree_string(root: BinaryTree, rec:bool=False) -> str:
-  if root is None:
-    return [], 0
-
-  right_child, idx_r = _build_btree_string(root.right, rec=True)
-  left_child, idx_l = _build_btree_string(root.left, rec=True)
-  
-  ret = []
-
-  for i, data in enumerate(right_child):
-    if i == idx_r:
-      ret.append("  ┌─" + data)
-    elif i < idx_r:
-      ret.append("    " + data)
-    else:
-      ret.append("  │ " + data)
-  
-  ret_idx = len(ret)
-  ret.append(f"-({root.data})")
-
-  for i, data in enumerate(left_child):
-    if i == idx_l:
-      ret.append("  └─" + data)
-    elif i > idx_l:
-      ret.append("    " + data)
-    else:
-      ret.append("  │ " + data) 
-
-  if rec:
-    return ret, ret_idx
-  return '\n'.join(ret)
 
 if __name__ == "__main__":
   l = (8, 3, 6, 1, 10, 14, 13, 4, 7)
   t = BinaryTree()
   for x in l:
     t.insert(x)
-  print(t)
   t.remove(10)
   print(t)
   print(list(t))
+  print(type(t))
+  t.save_graph()
