@@ -132,10 +132,10 @@ class TestBinaryTree(unittest.TestCase):
     for v in sample:
       root.insert(v)
     self.assertTrue(root.search(x))
-    
+
   def test_search_nonexist(self):
     sample = random.sample(range(0, 1000), 100)
-    x = 1001 
+    x = 1001
     root = bt.BinaryTree()
     for v in sample:
       root.insert(v)
