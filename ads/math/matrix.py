@@ -91,7 +91,6 @@ class Matrix:
     ]
     return Matrix(ret)
 
-  # **** Comparison Operators ****
   def __eq__(self, other) -> bool:
     return self.rows == other.rows
 
@@ -101,7 +100,6 @@ class Matrix:
   def __gt__(self, other) -> bool:
     return (self.shape > other.shape)
 
-  # **** Arithmetic Operators ****
   def __mul__(self, other) -> "Matrix":
     if type(other) is int:
       return self.rows * other
