@@ -216,7 +216,7 @@ class BinaryTree:
   def save_graph(self) -> None:
     try:
       graph = self._create_graph()
-      print('saving', graph)
+      print('saving to /tmp/net.svg', graph)
       nx.drawing.nx_pydot.write_dot(graph, '/tmp/net.dot')
       os.system('dot -Tsvg /tmp/net.dot -o /tmp/net.svg')
     except AttributeError:
