@@ -26,7 +26,7 @@ class Hanoi:
     return self.moves
 
 if __name__ == "__main__":
-  N = 3
+  N = 10
   H = Hanoi(N)
   ret = H.solve()
   print('Total moves:', ret)
