@@ -2,6 +2,7 @@
 
 import time
 
+import mlx.core as mx
 import torch
 import numpy as np
 import tensorflow as tf
@@ -17,7 +18,7 @@ def GeMM_numpy():
   et = time.monotonic()
   s = et-st
   flops = flop/s
-  print(f'{(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  print(f'np: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
 
 def GeMM_torch():
   A = torch.randn((N,N), dtype=torch.float32)
@@ -28,7 +29,7 @@ def GeMM_torch():
   et = time.monotonic()
   s = et-st
   flops = flop/s
-  print(f'{(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  print(f'torch: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
 
 def GeMM_tensorflow():
   A = tf.random.normal((N,N)) # dtype already as float32
@@ -39,11 +40,22 @@ def GeMM_tensorflow():
   et = time.monotonic()
   s = et-st
   flops = flop/s
-  print(f'{(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  print(f'tf: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
 
+def GeMM_mlx():
+  A = mx.random.normal([N,N]) # default dtype also is f32 
+  B = mx.random.normal([N,N]) 
+ 
+  st = time.monotonic()
+  C = A @ B
+  et = time.monotonic()
+  s = et-st
+  flops = flop/s
+  print(f'mlx: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
 
 
 if __name__ == '__main__':
   GeMM_numpy() 
   GeMM_torch()
   GeMM_tensorflow()
+  GeMM_mlx()
