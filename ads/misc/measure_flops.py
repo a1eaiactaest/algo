@@ -7,6 +7,9 @@ import torch
 import numpy as np
 import tensorflow as tf
 
+from ads.helpers import Timing, MeasureFLOPS
+
+
 N = 2048
 flop = 2*(N**3)
 
@@ -46,12 +49,14 @@ def GeMM_mlx():
   A = mx.random.normal([N,N]) # default dtype also is f32 
   B = mx.random.normal([N,N]) 
  
-  st = time.monotonic()
-  C = A @ B
+  with MeasureFLOPS(flop, unit_prefix='T'):
+    C = A @ B
+  '''
   et = time.monotonic()
   s = et-st
   flops = flop/s
   print(f'mlx: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  '''
 
 
 if __name__ == '__main__':
