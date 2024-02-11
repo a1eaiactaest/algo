@@ -44,6 +44,6 @@ class MeasureFLOPS(contextlib.ContextDecorator):
     self.t = et - self.st
     flops = self.Nflop/self.t
     if self.enabled:
-      print(f'{self.prefix}{(flops*self.ups[self.unit_prefix]):.2f} {self.unit_prefix}FLOPS, {self.t*1e3:.2f} ms'+(self.on_exit(self.t) if self.on_exit else ''))
+      print(f'{self.prefix} {(flops*self.ups[self.unit_prefix]):.2f} {self.unit_prefix}FLOPS, {self.t*1e3:.2f} ms'+(self.on_exit(self.t) if self.on_exit else ''))
         
 
