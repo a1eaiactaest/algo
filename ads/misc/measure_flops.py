@@ -17,51 +17,43 @@ flop = 2*(N**3)
 def GeMM_numpy():
   A = np.random.randn(N, N).astype(np.float32)
   B = np.random.randn(N, N).astype(np.float32)
-  st = time.monotonic()   
-  C = A @ B
-  et = time.monotonic()
-  s = et-st
-  flops = flop/s
-  print(f'np: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  with MeasureFLOPS(flop, unit_prefix='G', prefix='np'):
+    C = A @ B
 
 def GeMM_torch():
   A = torch.randn((N,N), dtype=torch.float32)
   B = torch.randn((N,N), dtype=torch.float32)
 
-  st = time.monotonic()
-  C = A @ B
-  et = time.monotonic()
-  s = et-st
-  flops = flop/s
-  print(f'torch: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  with MeasureFLOPS(flop, unit_prefix='G', prefix='torch'):
+    C = A @ B
 
 def GeMM_tensorflow():
   A = tf.random.normal((N,N)) # dtype already as float32
   B = tf.random.normal((N,N)) 
 
-  st = time.monotonic()
-  C = A @ B
-  et = time.monotonic()
-  s = et-st
-  flops = flop/s
-  print(f'tf: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
+  with MeasureFLOPS(flop, unit_prefix='G', prefix='tf'):
+    C = A @ B
 
 def GeMM_mlx():
   A = mx.random.normal([N,N]) # default dtype also is f32 
   B = mx.random.normal([N,N]) 
  
-  with MeasureFLOPS(flop, unit_prefix='T'):
+  with MeasureFLOPS(flop, unit_prefix='T', prefix='mlx'):
     C = A @ B
-  '''
-  et = time.monotonic()
-  s = et-st
-  flops = flop/s
-  print(f'mlx: {(flops * 1e-9):.2f} GFLOPS, {(s*1e3):.2f} ms')
-  '''
 
+# too slow
+'''
+def GeMM_ads():
+  A = Matrix(np.random.randn(N,N).tolist())
+  B = Matrix(np.random.randn(N,N).tolist())
+  
+  with MeasureFLOPS(flop, unit_prefix='G', prefix='ads'):
+    C = A @ B
+'''
 
 if __name__ == '__main__':
   GeMM_numpy() 
   GeMM_torch()
   GeMM_tensorflow()
   GeMM_mlx()
+  GeMM_ads()
