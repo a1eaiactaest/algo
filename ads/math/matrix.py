@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List, Union, Tuple
 
-import vectors
+from ads.math import vectors
 
 MVal = Union[int, float]
 class Matrix:
