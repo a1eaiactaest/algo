@@ -29,6 +29,19 @@ def merge(ids:list[int], pair:tuple[int,int], idx:int) -> list[int]:
       i += 1
   return newids
 
+def decode(ids:list[int]) -> str:
+  tokens = b''.join(vocab[idx] for idx in ids)
+  text = tokens.decode('utf-8', errors='replace')
+  return text
+
+def encode(text:str) -> list[int]:
+  tokens = list(text.encode('utf-8'))
+  while len(tokens) >= 2:
+    stats = get_stats(tokens)
+    pair = min(stats, key=lambda p: merges.get(p, float('inf')))
+    if pair not in merges: break
+    idx = merges[pair]
+    tokens = merge(tokens, pair, idx)
 
 text = """Nathan Reed
 Blog Stuff I’ve Made Talks About Me
@@ -259,3 +272,10 @@ compression = len(ids)/init_length
 print(f"tokens created: {colored(len(merges), 'blue')}")
 print(f"ids length delta: {colored(init_length - len(ids), 'blue')} ({colored(init_length, 'red')}->{colored(len(ids), 'green')})")
 print(f"compression of init value: {colored(compression, 'blue')}")
+
+vocab = {idx: bytes([idx]) for idx in range(256)}
+for (p0, p1), idx in merges.items():
+  vocab[idx] = vocab[p0] + vocab[p1]
+
+
+
