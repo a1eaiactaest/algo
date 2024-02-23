@@ -7,6 +7,10 @@ from ads.helpers import colored
 text = "Ｕｎｉｃｏｄｅ! 🅤🅝🅘🅒🅞🅓🅔‽ 🇺‌🇳‌🇮‌🇨‌🇴‌🇩‌🇪! 😄 The very name strikes fear and awe into the hearts of programmers worldwide. We all know we ought to “support Unicode” in our software (whatever that means—like using wchar_t for all the strings, right?). But Unicode can be abstruse, and diving into the thousand-page Unicode Standard plus its dozens of supplementary annexes, reports, and notes can be more than a little intimidating. I don’t blame programmers for still finding the whole thing mysterious, even 30 years after Unicode’s inception."
 
 
+class TokenizationConfig:
+  vocab_size = 276  
+  num_merges = vocab_size - 256 # 2^8
+
 def get_stats(ids:list[int]) -> 'defaultdict':
   counts = defaultdict(int)
   for pair in zip(ids, ids[1:]):
@@ -239,3 +243,19 @@ print(C)
 top_pair = max(C, key=C.get)
 print(f'{colored("top pair:", "green")} {top_pair}')
 
+merges = {}
+ids = list(tokens) # copy
+init_length = len(ids)
+
+for i in range(TokenizationConfig.num_merges):
+  stats = get_stats(ids)
+  pair = max(stats, key=stats.get)
+  idx = 256 + i 
+  print(f"merging {colored(pair, 'red')} into ({colored(idx, 'green')})")
+  ids = merge(ids, pair, idx)
+  merges[pair] = idx
+
+compression = len(ids)/init_length
+print(f"tokens created: {colored(len(merges), 'blue')}")
+print(f"ids length delta: {colored(init_length - len(ids), 'blue')} ({colored(init_length, 'red')}->{colored(len(ids), 'green')})")
+print(f"compression of init value: {colored(compression, 'blue')}")
