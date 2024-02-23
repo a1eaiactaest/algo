@@ -1,5 +1,12 @@
 import time
 import contextlib
+from typing import Optional
+
+
+def colored(st:str, color:Optional[str], background=False):
+  if color is not None:
+    return f"\u001b[{10*background+60*(color.upper() == color)+30+['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'].index(color.lower())}m{st}\u001b[0m"
+  else: return st
 
 def timeit(function):
   def wrap(*args, **kwargs):
