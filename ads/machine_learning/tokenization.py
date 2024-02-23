@@ -42,6 +42,7 @@ def encode(text:str) -> list[int]:
     if pair not in merges: break
     idx = merges[pair]
     tokens = merge(tokens, pair, idx)
+  return tokens
 
 text = """Nathan Reed
 Blog Stuff I’ve Made Talks About Me
