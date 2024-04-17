@@ -53,13 +53,13 @@ class MBConvBlock:
     groups = self._depthwise_conv.shape[0]
     assert groups == 1, colored(f'only groups=1 supported, got groups={groups}')
     x = mx.conv2d(x, self._depthwise_conv, padding=self.pad, stride=self.strides, groups=self._depthwise_conv.shape[0])
-    x = mx.silu(self._bn1(x))
+    x = nn.silu(self._bn1(x))
 
     if self.has_se:
       x_squeezed = nn.MaxPool2d(kernel_size=x.shape[2:4])(x)
-      x_squeezed = mx.silu(mx.add(mx.conv2d(x, self._se_reduce), self._se_reduce_bias))
+      x_squeezed = nn.silu(mx.add(mx.conv2d(x, self._se_reduce), self._se_reduce_bias))
       x_squeezed = mx.add(mx.conv2d(x, self._se_expand), self._se_expand_bias)
-      x = mx.mul(mx.sigmoid(x_squeezed))
+      x = mx.multiply(mx.sigmoid(x_squeezed))
 
     x = self._bn2(mx.conv2d(x, self._project_conv))
     if x.shape == inputs.shape:
