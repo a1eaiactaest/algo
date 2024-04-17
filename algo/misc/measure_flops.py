@@ -56,4 +56,4 @@ if __name__ == '__main__':
   GeMM_torch()
   GeMM_tensorflow()
   GeMM_mlx()
-  GeMM_ads()
+  #GeMM_ads()
