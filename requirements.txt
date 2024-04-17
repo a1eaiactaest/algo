@@ -4,3 +4,7 @@ networkx
 matplotlib
 scipy
 numpy
+mlx
+torch
+tensorflow
+tqdm
