@@ -1,6 +1,8 @@
+import sys
 import time
 import contextlib
 from typing import Optional
+from io import StringIO
 
 
 def colored(st:str, color:Optional[str], background=False):
@@ -53,4 +55,14 @@ class MeasureFLOPS(contextlib.ContextDecorator):
     if self.enabled:
       print(f'{self.prefix} {(flops*self.ups[self.unit_prefix]):.2f} {self.unit_prefix}FLOPS, {self.t*1e3:.2f} ms'+(self.on_exit(self.t) if self.on_exit else ''))
         
+class CaptureOutput(list[str]):
+  def __enter__(self) -> "CaptureOutput":
+    self._original_stdout = sys.stdout
+    self._temp_stdout = StringIO()
+    sys.stdout = self._temp_stdout
+    return self
 
+  def __exit__(self, *args) -> None:
+    lines = self._temp_stdout.getvalue().splitlines()
+    self.extend(line.rstrip() for line in lines)
+    sys.stdout = self._original_stdout

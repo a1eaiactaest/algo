@@ -1,29 +1,12 @@
 import unittest
 import random
-import sys
 
-try:
-  from StringIO import StringIO
-except ImportError:
-  from io import StringIO
-
+from algo.helpers import CaptureOutput
 
 import binary_tree as bt
 from linked_list import *
 
-class CaptureOutput(list[str]):
-  """Catch stdout."""
 
-  def __enter__(self) -> "CaptureOutput":
-    self._original_stdout = sys.stdout
-    self._temp_stdout = StringIO()
-    sys.stdout = self._temp_stdout
-    return self
-
-  def __exit__(self, *args: Any) -> None:
-    lines = self._temp_stdout.getvalue().splitlines()
-    self.extend(line.rstrip() for line in lines)
-    sys.stdout = self._original_stdout
 
 def pprint_linked_list(linked_list) -> str:
   with CaptureOutput() as output:
