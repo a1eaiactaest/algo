@@ -2,7 +2,7 @@
 import numpy as np
 from collections import defaultdict
 
-from ads.helpers import colored
+from algo.helpers import colored
 
 text = """Nathan Reed
 Blog Stuff I’ve Made Talks About Me

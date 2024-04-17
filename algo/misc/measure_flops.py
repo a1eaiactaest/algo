@@ -7,8 +7,8 @@ import torch
 import numpy as np
 import tensorflow as tf
 
-from ads.math.matrix import Matrix
-from ads.helpers import Timing, MeasureFLOPS
+from algo.math.matrix import Matrix
+from algo.helpers import Timing, MeasureFLOPS
 
 
 N = 2048

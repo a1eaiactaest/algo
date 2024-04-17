@@ -7,7 +7,7 @@ import mlx.core as mx
 import mlx.nn as nn
 import mlx.optimizers as optim
 
-from ads.helpers import colored
+from algo.helpers import colored
 
 class MBConvBlock:
   def __init__(
