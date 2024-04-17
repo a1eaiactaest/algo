@@ -4,46 +4,6 @@ from collections import defaultdict
 
 from ads.helpers import colored
 
-text = "Ｕｎｉｃｏｄｅ! 🅤🅝🅘🅒🅞🅓🅔‽ 🇺‌🇳‌🇮‌🇨‌🇴‌🇩‌🇪! 😄 The very name strikes fear and awe into the hearts of programmers worldwide. We all know we ought to “support Unicode” in our software (whatever that means—like using wchar_t for all the strings, right?). But Unicode can be abstruse, and diving into the thousand-page Unicode Standard plus its dozens of supplementary annexes, reports, and notes can be more than a little intimidating. I don’t blame programmers for still finding the whole thing mysterious, even 30 years after Unicode’s inception."
-
-
-class TokenizationConfig:
-  vocab_size = 276  
-  num_merges = vocab_size - 256 # 2^8
-
-def get_stats(ids:list[int]) -> 'defaultdict':
-  counts = defaultdict(int)
-  for pair in zip(ids, ids[1:]):
-    counts[pair] += 1
-  return counts
-
-def merge(ids:list[int], pair:tuple[int,int], idx:int) -> list[int]: 
-  newids = []
-  i = 0
-  while i < (N := len(ids)):
-    if i < N-1 and ids[i] == pair[0] and ids[i+1] == pair[1]:
-      newids.append(idx)
-      i += 2
-    else:
-      newids.append(ids[i])
-      i += 1
-  return newids
-
-def decode(ids:list[int]) -> str:
-  tokens = b''.join(vocab[idx] for idx in ids)
-  text = tokens.decode('utf-8', errors='replace')
-  return text
-
-def encode(text:str) -> list[int]:
-  tokens = list(text.encode('utf-8'))
-  while len(tokens) >= 2:
-    stats = get_stats(tokens)
-    pair = min(stats, key=lambda p: merges.get(p, float('inf')))
-    if pair not in merges: break
-    idx = merges[pair]
-    tokens = merge(tokens, pair, idx)
-  return tokens
-
 text = """Nathan Reed
 Blog Stuff I’ve Made Talks About Me
 The Many Meanings of “Shader”Quadrilateral Interpolation, Part 2
@@ -250,6 +210,43 @@ GPU(15)
 Physics(6)
 Eye Candy(4)
 © 2007–2023 by Nathan Reed. Licensed CC-BY-4.0."""
+
+class TokenizationConfig:
+  vocab_size = 276  
+  num_merges = vocab_size - 256 # 2^8
+
+def get_stats(ids:list[int]) -> 'defaultdict':
+  counts = defaultdict(int)
+  for pair in zip(ids, ids[1:]):
+    counts[pair] += 1
+  return counts
+
+def merge(ids:list[int], pair:tuple[int,int], idx:int) -> list[int]: 
+  newids = []
+  i = 0
+  while i < (N := len(ids)):
+    if i < N-1 and ids[i] == pair[0] and ids[i+1] == pair[1]:
+      newids.append(idx)
+      i += 2
+    else:
+      newids.append(ids[i])
+      i += 1
+  return newids
+
+def decode(ids:list[int]) -> str:
+  tokens = b''.join(vocab[idx] for idx in ids)
+  text = tokens.decode('utf-8', errors='replace')
+  return text
+
+def encode(text:str) -> list[int]:
+  tokens = list(text.encode('utf-8'))
+  while len(tokens) >= 2:
+    stats = get_stats(tokens)
+    pair = min(stats, key=lambda p: merges.get(p, float('inf')))
+    if pair not in merges: break
+    idx = merges[pair]
+    tokens = merge(tokens, pair, idx)
+  return tokens
 
 tokens = list(map(int, text.encode('utf-8')))
 C = get_stats(tokens)
