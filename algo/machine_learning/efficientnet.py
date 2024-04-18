@@ -138,6 +138,14 @@ class EfficientNet(nn.Module):
       self._fc = nn.init.glorot_uniform()(mx.zeros((classes, out_channels)))
       self._fc_bias = mx.zeros(classes)
     else: self._fc = None
+  
+  def __call__(self, x):
+    x = nn.silu(self._bn0(mx.conv2d(x, self._conv_stem, padding=(0,1,0,1), stride=2)))
+    x = sequential(self.blocks)
+    x = nn.silu(self._bn1(mx.conv2d(x, self._conv_head)))
+    x = nn.AvgPool2d(kernel_size=x.shape[2:4])(x)
+    x = x.reshape(-1, x.shape[1])
+    return mx.add(nn.Linear()(self._fc), self._fc_bias) if self._fc is not None else x
 
   
 
