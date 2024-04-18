@@ -136,7 +136,7 @@ def fetch(url: str, name: Optional[str]=None, allow_cache=(not getenv('DISABLE_H
         pathlib.Path(f.name).rename(fp)
   return fp
 
-def torch_load(fn:str, save:Optional[bool]=False, name:Optional[str]=None) -> tuple[pathlib.Path, dict]:
+def torch_load(fn:str, save:Optional[bool]=False, name:Optional[str]=None) -> tuple[str, dict]:
   import torch
   if not isinstance(fn, pathlib.Path): fn = pathlib.Path(fn)
   state = torch.load(fn)
@@ -145,4 +145,4 @@ def torch_load(fn:str, save:Optional[bool]=False, name:Optional[str]=None) -> tu
   fp = pathlib.Path(CACHE_DIR)/'algo'/'weights'/fn/'weights.npz'
   fp.parent.mkdir(parents=True, exist_ok=True)
   np.savez(fp, **weights)
-  return fp, weights
+  return str(fp), weights
