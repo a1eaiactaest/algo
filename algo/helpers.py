@@ -1,9 +1,11 @@
 import sys
 import time
+import functools
 import contextlib
-from typing import Optional
+from typing import Optional, List, Callable
 from io import StringIO
 
+def sequential(l1:List[Callable]): return functools.reduce(lambda x,f: f(x), l1)
 
 def colored(st:str, color:Optional[str], background=False):
   if color is not None:
