@@ -1,9 +1,17 @@
+import os
 import sys
 import time
+import pathlib
+import platform
 import functools
 import contextlib
-from typing import Optional, List, Callable
+from tqdm import tqdm 
 from io import StringIO
+from typing import Optional, List, Callable
+
+PLAT = platform.system()
+assert PLAT == 'Darwin' or PLAT == 'Linux', f"Unsupported platform: {PLAT}"
+CACHE_DIR = os.path.expanduser('~/Library/Caches') if PLAT == 'Darwin' else os.path.expanduser('~/.cache')
 
 def sequential(l1:List[Callable]): return functools.reduce(lambda x,f: f(x), l1)
 
