@@ -1,10 +1,13 @@
 import os
 import sys
 import time
+import hashlib
 import pathlib
+import tempfile
 import platform
 import functools
 import contextlib
+import urllib.request
 from tqdm import tqdm 
 from io import StringIO
 from typing import Optional, List, Callable
@@ -76,3 +79,33 @@ class CaptureOutput(list[str]):
     lines = self._temp_stdout.getvalue().splitlines()
     self.extend(line.rstrip() for line in lines)
     sys.stdout = self._original_stdout
+
+
+@functools.lru_cache(maxsize=None)
+def getenv(key:str, default=0): return type(default)(os.getenv(key, default))
+
+def fetch(url: str, name: Optional[str]=None, allow_cache=(not getenv('DISABLE_HTTP_CACHE'))):
+  if url.startswith(('/', '.')): return pathlib.Path(url)
+  fp = None
+  if name is not None and (isinstance(name, pathlib.Path) or '/' in name):
+    fp = pathlib.Path(name)
+  else:
+    if name: fn = name
+    else: fn = hashlib.md5(url.encode('utf-8')).hexdigest()
+    fp = pathlib.Path(CACHE_DIR)/'algo'/'downloads'/fn
+    print(f'fetching from a cached file at {fp}')
+  if not fp.is_file() or not allow_cache:
+    with urllib.request.urlopen(url, timeout=10) as r:
+      assert r.status == 200
+      total_bytes = int(r.headers.get('Content-Length', 0))
+      progress_bar = tqdm(total=total_bytes, unit='B', unit_scale=True, desc=url)
+      (path := fp.parent).mkdir(parents=True, exist_ok=True)
+      with tempfile.NamedTemporaryFile(dir=path, delete=False) as f:
+        print(f'saving from {r} to tmp file at {f}')
+        while chunk := r.read(16384):
+          progress_bar.update(f.write(chunk))
+        f.close()
+        if (file_size := os.stat(f.name).st_size) < total_bytes:
+          raise RuntimeError(f'fetch incomplete, file size mismatch: {file_size} < {total_bytes}')
+        pathlib.Path(f.name).rename(fp)
+  return fp
