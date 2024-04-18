@@ -56,7 +56,7 @@ class MBConvBlock:
     x = nn.silu(self._bn1(x))
 
     if self.has_se:
-      x_squeezed = nn.MaxPool2d(kernel_size=x.shape[2:4])(x)
+      x_squeezed = nn.AvgPool2d(kernel_size=x.shape[2:4])(x)
       x_squeezed = nn.silu(mx.add(mx.conv2d(x, self._se_reduce), self._se_reduce_bias))
       x_squeezed = mx.add(mx.conv2d(x, self._se_expand), self._se_expand_bias)
       x = mx.multiply(mx.sigmoid(x_squeezed))
