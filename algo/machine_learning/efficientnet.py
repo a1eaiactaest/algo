@@ -25,7 +25,7 @@ class MBConvBlock:
     oup = expand_ratio * input_filters
     if expand_ratio != 1:
       self._expand_conv = nn.init.glorot_uniform()(mx.zeros((oup, input_filters, 1, 1)))
-      self._b0 = nn.BatchNorm(oup)
+      self._bn0 = nn.BatchNorm(oup)
     else:
       self._expand_conv = None
 
@@ -39,9 +39,9 @@ class MBConvBlock:
     if self.has_se:
       num_squeezed_channels = max(1, int(input_filters * se_ratio))
       self._se_reduce = nn.init.glorot_uniform()(mx.zeros((oup, input_filters, 1, 1)))
-      self.se_reduce_bias = mx.zeros(num_squeezed_channels)
+      self._se_reduce_bias = mx.zeros(num_squeezed_channels)
       self._se_expand = nn.init.glorot_uniform()(mx.zeros((oup, input_filters, 1, 1)))
-      self.se_expand_bias = mx.zeros(num_squeezed_channels)
+      self._se_expand_bias = mx.zeros(num_squeezed_channels)
 
     self._project_conv = nn.init.glorot_uniform()(mx.zeros((output_filters, oup, 1, 1)))
     self._bn2 = nn.BatchNorm(output_filters)
@@ -115,18 +115,18 @@ class EfficientNet(nn.Module):
         [1, 3, (2, 2), 1, 80, 192, 0.25],
         [1, 3, (2, 2), 1, 192, 320, 0.25],
       ]
-    elif self.numer == -2:
+    elif self.number == -2:
       blocks_args = [
         [1, 9, (8, 8), 1, 32, 320, 0.25],
       ]
 
-    self.blocks = []
+    self._blocks = []
 
     for num_repeats, kernel_size, strides, expand_ratio, input_filters, output_filters, se_ratio in blocks_args:
       input_filters = round_filters(input_filters)
       output_filters = round_filters(output_filters)
       for _ in range(round_repeats(num_repeats)):
-        self.blocks.append(MBConvBlock(kernel_size, strides, expand_ratio, input_filters, output_filters, se_ratio, has_se=has_se, track_running_stats=track_running_stats))
+        self._blocks.append(MBConvBlock(kernel_size, strides, expand_ratio, input_filters, output_filters, se_ratio, has_se=has_se, track_running_stats=track_running_stats))
         input_filters = output_filters
         strides = (1, 1)
 
@@ -141,7 +141,7 @@ class EfficientNet(nn.Module):
   
   def __call__(self, x):
     x = nn.silu(self._bn0(mx.conv2d(x, self._conv_stem, padding=(0,1,0,1), stride=2)))
-    x = sequential(self.blocks)
+    x = sequential(self._blocks)
     x = nn.silu(self._bn1(mx.conv2d(x, self._conv_head)))
     x = nn.AvgPool2d(kernel_size=x.shape[2:4])(x)
     x = x.reshape(-1, x.shape[1])
