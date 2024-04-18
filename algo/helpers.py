@@ -1,12 +1,15 @@
 import os
 import sys
 import time
+import pstats
 import hashlib
 import pathlib
+import cProfile
 import tempfile
 import platform
 import functools
 import contextlib
+import numpy as np
 import urllib.request
 from tqdm import tqdm 
 from io import StringIO
@@ -34,6 +37,29 @@ def timeit(function):
     print("Execution time of %s was %2.6fs."%(function, execution_time))
     return ret
   return wrap
+
+def _format_fcn(fcn): return f'{fcn[0]}:{fcn[1]}:{fcn[2]}'
+class Profiling(contextlib.ContextDecorator):
+  def __init__(self, enabled=True, sort='cumtime', frac=0.2, fn=None, ts=1):
+    self.enabled = enabled
+    self.sort = sort
+    self.frac = frac
+    self.fn = fn
+    self.time_scale = 1e3/ts
+  def __enter__(self):
+    self.pr = cProfile.Profile()
+    if self.enabled: self.pr.enable()
+  def __exit__(self, *exc):
+    if self.enabled:
+      self.pr.disable()
+      if self.fn: self.pr.dump_stats(self.fn)
+      stats = pstats.Stats(self.pr).strip_dirs().sort_stats(self.sort)
+      for fcn in stats.fcn_list[0:int(len(stats.fcn_list)*self.frac)]:
+        (_, num_calls, tottime, cumtime, callers) = stats.stats[fcn]
+        scallers = sorted(callers.items(), key=lambda x: -x[1][2])
+        print(f"n:{num_calls:8d}  tm:{tottime*self.time_scale:7.2f}ms  tot:{cumtime*self.time_scale:7.2f}ms",
+              colored(_format_fcn(fcn), "yellow") + " "*(50-len(_format_fcn(fcn))),
+              colored(f"<- {(scallers[0][1][2]/tottime)*100:3.0f}% {_format_fcn(scallers[0][0])}", "BLACK") if len(scallers) else '')
 
 class Timing(contextlib.ContextDecorator):
   def __init__(self, prefix='', on_exit=None, enabled=True):
