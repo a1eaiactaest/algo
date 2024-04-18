@@ -19,6 +19,13 @@ PLAT = platform.system()
 assert PLAT == 'Darwin' or PLAT == 'Linux', f"Unsupported platform: {PLAT}"
 CACHE_DIR = os.path.expanduser('~/Library/Caches') if PLAT == 'Darwin' else os.path.expanduser('~/.cache')
 
+def get_child(obj, key):
+  for k in key.split('.'):
+    if k.isnumeric(): obj = obj[int(k)]
+    elif isinstance(obj, dict): obj = obj[k]
+    else: obj = getattr(obj, k)
+  return obj
+
 def sequential(l1:List[Callable]): return functools.reduce(lambda x,f: f(x), l1)
 
 def colored(st:str, color:Optional[str], background=False):
