@@ -13,7 +13,7 @@ class BasicBlock:
     assert groups == 1 and base_width == 64, 'BasicBlock only supports groups=1 and base_width=64'
     self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
     self.bn1 = nn.BatchNorm(planes)
-    self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1, stride=1, bias=Falsee)
+    self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1, stride=1, bias=False)
     self.bn2 = nn.BatchNorm(planes)
 
     self.downsample = []
