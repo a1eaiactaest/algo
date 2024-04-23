@@ -7,7 +7,7 @@ import mlx.nn as nn
 
 from algo.helpers import sequential
 
-class BasicBlock:
+class BasicBlock(nn.Module):
   expansion = 1
   def __init__(self, in_planes, planes, stride=1, groups=1, base_width=64):
     assert groups == 1 and base_width == 64, 'BasicBlock only supports groups=1 and base_width=64'
@@ -29,7 +29,7 @@ class BasicBlock:
     out = nn.relu(out + sequential(x, self.downsample))
     return out
 
-class Bottleneck:
+class Bottleneck(nn.Module):
   expansion = 4
   def __init__(self, in_planes, planes, stride=1, groups=1, base_width=64):
     width = int(planes * (base_width / 64.0)) * groups
