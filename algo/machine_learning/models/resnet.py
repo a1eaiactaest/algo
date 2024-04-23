@@ -23,7 +23,7 @@ class BasicBlock:
         nn.BatchNorm(self.expansion*planes)
       ]
 
-  def __call__(self, x);
+  def __call__(self, x):
     out = nn.relu(self.bn1(self.conv1(x)))
     out = self.bn2(self.conv2(out))
     out = nn.relu(out + sequential(x, self.downsample))
