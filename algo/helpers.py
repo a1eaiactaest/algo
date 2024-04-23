@@ -26,7 +26,7 @@ def get_child(obj, key):
     else: obj = getattr(obj, k)
   return obj
 
-def sequential(l1:List[Callable]): return functools.reduce(lambda x,f: f(x), l1)
+def sequential(x, l1:List[Callable]): return functools.reduce(lambda arg,f: f(arg), l1, x)
 
 def colored(st:str, color:Optional[str], background=False):
   if color is not None:
