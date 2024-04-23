@@ -5,9 +5,8 @@ import math
 import mlx
 import mlx.core as mx
 import mlx.nn as nn
-import mlx.optimizers as optim
 
-from algo.helpers import colored, sequential
+from algo.helpers import colored, sequential, fetch, torch_load, get_child
 
 class MBConvBlock:
   def __init__(
@@ -51,7 +50,7 @@ class MBConvBlock:
     if self._expand_conv is not None:
       x = nn.silu(self._bn0(mx.conv2d(x, self._expand_conv)))
     groups = self._depthwise_conv.shape[0]
-    assert groups == 1, colored(f'only groups=1 supported, got groups={groups}')
+    assert groups == 1, colored(f'only groups=1 supported, got groups={groups}') # this may be a problem
     x = mx.conv2d(x, self._depthwise_conv, padding=self.pad, stride=self.strides, groups=self._depthwise_conv.shape[0])
     x = nn.silu(self._bn1(x))
 
@@ -102,7 +101,7 @@ class EfficientNet(nn.Module):
       [1, 3, (1, 1), 1, 32, 16, 0.25],
       [2, 3, (2, 2), 6, 16, 24, 0.25],
       [2, 5, (2, 2), 6, 24, 40, 0.25],
-      [3, 5, (2, 2), 6, 40, 80, 0.25],
+      [3, 3, (2, 2), 6, 40, 80, 0.25],
       [3, 5, (1, 1), 6, 80, 112, 0.25],
       [4, 5, (2, 2), 6, 112, 192, 0.25],
       [1, 3, (1, 1), 6, 192, 320, 0.25],
@@ -147,7 +146,36 @@ class EfficientNet(nn.Module):
     x = x.reshape(-1, x.shape[1])
     return mx.add(nn.Linear()(self._fc), self._fc_bias) if self._fc is not None else x
 
-  
+  def pretrained_weights(self):
+    urls = {
+      0: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b0-355c32eb.pth",
+      1: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b1-f1951068.pth",
+      2: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b2-8bb594d6.pth",
+      3: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b3-5fb5a3c3.pth",
+      4: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b4-6ed6700e.pth",
+      5: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b5-b6417697.pth",
+      6: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b6-c76e70fd.pth",
+      7: "https://github.com/lukemelas/EfficientNet-PyTorch/releases/download/1.0/efficientnet-b7-dcc49843.pth",
+    }
+    fp, _ = torch_load(fetch(urls[self.number]))
+    b0 = mx.load(fp)
+    print(b0)
+    for k, v in b0.items():
+      if k.endswith('num_batches_tracked'): continue
+      for cat in ['_conv_head', '_conv_stem', '_depthwise_conv', '_expand_conv', '_fc', '_project_conv', '_se_reduce', '_se_expand']:
+        if cat in k:
+          k = k.replace('.bias', '_bias')
+          k = k.replace('.weight', '')
+      mv = get_child(self, k)
+      vnp = v
+      #vnp = vnp if vnp.shape != () else mx.array([vnp])
+      vnp = vnp if k != '_fc' else vnp.T
+      if mv.shape == vnp.shape:
+        mv = mx.array(vnp)
+      else:
+        print("MISMATCH SHAPE IN %s, %r %r" % (k, mv.shape, vnp.shape))
+    print(len(b0))
+
 
 
 
