@@ -29,4 +29,30 @@ class BasicBlock:
     out = nn.relu(out + sequential(x, self.downsample))
     return out
 
+class Bottleneck:
+  expansion = 4
+  def __init__(self, in_planes, planes, stride=1, groups=1, base_width=64):
+    width = int(planes * (base_width / 64.0)) * groups
+
+    self.conv1 = nn.Conv2d(in_planes, width, kernel_size=1, stride=1, bias=False)
+    self.bn1 = nn.BatchNorm(width)
+    self.conv2 = nn.Conv2d(width, width, kernel_size=3, padding=1, groups=groups, stride=1, bias=False)
+    self.bn2 = nn.BatchNorm(width)    
+    self.conv3 = nn.Conv2d(width, self.expansion*planes, kernel_size=1, bias=False)
+    self.bn3 = nn.BatchNorm(self.expansion*planes)
+    self.downsample = []
+    if stride != 1 or in_planes != self.expansion*planes:
+      self.downsample = [
+        nn.Conv2d(in_planes, self.expansion*planes, kernel_size=1, stride=stride, bias=False),
+        nn.BatchNorm(self.expansion*planes)
+      ]
+
+  def __call__(self, x):
+    out = nn.relu(self.bn1(self.conv1(x)))
+    out = nn.relu(self.bn2(self.conv2(x)))
+    out = self.bn3(self.conv3(out))
+    out = nn.relu(out + sequential(x, self.downsample))
+    return out
+
+
 
