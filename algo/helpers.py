@@ -13,7 +13,7 @@ import numpy as np
 import urllib.request
 from tqdm import tqdm 
 from io import StringIO
-from typing import Optional, List, Callable
+from typing import Optional, List, Callable, Generator
 
 PLAT = platform.system()
 assert PLAT == 'Darwin' or PLAT == 'Linux', f"Unsupported platform: {PLAT}"
@@ -147,9 +147,16 @@ def torch_load(fn:str, save:Optional[bool]=False, name:Optional[str]=None) -> tu
   import torch
   if not isinstance(fn, pathlib.Path): fn = pathlib.Path(fn)
   state = torch.load(fn)
-  weights = {k: v.to(torch.float32).numpy() for k,v in state.items()}
+  weights = {k: v.detach().numpy() for k,v in state.items()}
   fn = name if name else fn.stem
   fp = pathlib.Path(CACHE_DIR)/'algo'/'weights'/fn/'weights.npz'
   fp.parent.mkdir(parents=True, exist_ok=True)
   np.savez(fp, **weights)
-  return str(fp), weights
+  return weights
+
+def flatten_dict(d:dict, depth:int) -> Generator:
+  if depth == 1: 
+    for x in d.values(): yield x
+  for x in d.values():
+    if isinstance(x, dict):
+      for y in flatten_dict(x, depth-1): yield y

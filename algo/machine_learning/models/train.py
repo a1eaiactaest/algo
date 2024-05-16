@@ -6,6 +6,8 @@ import mlx.optimizers as optim
 import numpy as np
 from tqdm import trange
 
+from algo.helpers import colored
+
 CI = os.getenv("CI", "") != ""
 
 def train(
@@ -34,7 +36,8 @@ def train(
     
   losses, accuraccies = [], []
   for i in (t := trange(steps, disable=CI)):
-    samp = np.random.randint(0, X_train.shape[0], size=(BS,))
+    print(X_train.shape[0])
+    samp = mx.random.randint(0, X_train.shape[0], shape=(BS,))
     x = mx.array(transform(X_train[samp]))
     y = mx.array(target_transform(Y_train[samp]))
     loss, accuraccy = train_step(x, y)

@@ -5,7 +5,7 @@ import mlx
 import mlx.core as mx
 import mlx.nn as nn
 
-from algo.helpers import sequential, torch_load, fetch, get_child
+from algo.helpers import sequential, torch_load, fetch, get_child, colored
 
 class BasicBlock(nn.Module):
   expansion = 1
@@ -38,7 +38,7 @@ class Bottleneck(nn.Module):
 
     self.conv1 = nn.Conv2d(in_planes, width, kernel_size=1, stride=1, bias=False)
     self.bn1 = nn.BatchNorm(width)
-    self.conv2 = nn.Conv2d(width, width, kernel_size=3, padding=1, groups=groups, stride=1, bias=False)
+    self.conv2 = nn.Conv2d(width, width, kernel_size=3, padding=1, stride=1, bias=False)
     self.bn2 = nn.BatchNorm(width)    
     self.conv3 = nn.Conv2d(width, self.expansion*planes, kernel_size=1, bias=False)
     self.bn3 = nn.BatchNorm(self.expansion*planes)
@@ -80,8 +80,8 @@ class ResNet(nn.Module):
     self.groups = groups
     self.base_width = width_per_group
 
-    self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
-    self.bn1 = nn.BatchNorm(64)
+    self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+    self.bn1 = nn.BatchNorm(16)
     self.layer1 = self._make_layer(self.block, 64, self.num_blocks[0], stride=1)
     self.layer2 = self._make_layer(self.block, 128, self.num_blocks[1], stride=2)
     self.layer3 = self._make_layer(self.block, 256, self.num_blocks[2], stride=2)
@@ -100,6 +100,7 @@ class ResNet(nn.Module):
     is_feature_only = self.fc is None
     if is_feature_only: 
       features = []
+    print(colored(x.shape, 'yellow'))
     out = nn.relu(self.bn1(self.conv1(x)))
     out = nn.MaxPool2d((3,3), 2)(mx.pad(out, 1))
     out = sequential(out, self.layer1)
@@ -129,7 +130,7 @@ class ResNet(nn.Module):
     self.url = urls[(self.num, self.groups, self.base_width)]
     for k, v in torch_load(fetch(self.url)).items():
       obj = get_child(self, k)
-      dat = mx.array(v)
+      dat = mx.array(v).reshape(obj.shape)
 
       if 'fc.' in k and obj.shape != dat.shape:
         print('skipping fully connected layer')
