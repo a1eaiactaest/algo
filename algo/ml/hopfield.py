@@ -20,7 +20,7 @@ class HopfieldNetwork:
     for _ in range(max_iterations):
       for i in range(self.n_neurons):
         activation = np.dot(self.weights[i], pattern)
-        pattern[i] = np.sign(activation)
+        pattern[i] = np.sign(activation) # since values are polarized we can use sign func
     return pattern
 
 
