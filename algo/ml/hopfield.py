@@ -28,20 +28,38 @@ class HopfieldNetwork:
 def bipolarize(pattern):
   return np.where(pattern == 0, -1, 1)
 
-if __name__ == "__main__":
-  N = 1000
-  H = HopfieldNetwork(N)
+# generates already polarized
+def gen_rand_patterns(n_patterns, n_neurons):
+  return np.random.choice([-1, 1], size=(n_patterns, n_neurons))
 
-  patterns = np.array([[1, 0, 1, 0], [0, 1, 0, 1]])
-  patterns = np.array([bipolarize(p) for p in patterns])
+if __name__ == "__main__":
+  np.random.seed(50058)
+
+  n_neurons = 100
+  H = HopfieldNetwork(n_neurons)
+
+  n_patterns = 5
+  patterns = gen_rand_patterns(n_patterns, n_neurons)
+  print(patterns)
+  #patterns = np.array([bipolarize(p) for p in patterns])
 
   H.train(patterns)
 
-  # noisy version of patterns[0]
-  test_pattern = np.array([1, 0, 1, 1]) 
-  bipolar_test_pattern = bipolarize(test_pattern)
-  print(f"test pattern (noisy): {test_pattern}")
-  recalled_pattern = H.recall(bipolar_test_pattern)
-  binary_recalled_pattern = np.where(recalled_pattern == -1, 0, 1)
-  print(f"recalled pattern: {binary_recalled_pattern}")
+  test_pattern_idx = 0
+  original_pattern = patterns[test_pattern_idx]
+
+  noisy_pattern = original_pattern.copy()
+  noise_indices = np.random.choice(n_neurons, size=int(.1*n_neurons), replace=False)
+  print(noise_indices)
+  noisy_pattern[noisy_pattern] *= -1 # apply noise by flipping selected bits
+
+  print(f"originl pattern: {original_pattern}")
+  print(f"noisy pattern: {noisy_pattern}")
+
+  recalled_pattern = H.recall(noisy_pattern)
+
+  print(f"recalled pattern: {recalled_pattern}")
+
+  acc = np.mean(recalled_pattern == original_pattern)
+  print(f"acc of recall {acc}")
 
